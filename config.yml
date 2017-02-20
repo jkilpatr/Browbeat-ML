@@ -1,0 +1,25 @@
+elastic-host: <elastic-ip-here>
+elastic-port: 9200
+training-sets:
+  - uuid: 353587d2-05de-4705-8cfa-7bd2f87438aa
+    category: "passing"
+    set: "perf-ci"
+  - uuid: 9e72d8ac-6341-41c6-ad95-59239c125f9a
+    category: "failing"
+    set: "perf-ci"
+validation-sets:
+  - uuid: 5f93e46d-f25f-4057-8ee3-c7762005da93
+    category: "failing"
+    set: "perf-ci"
+rally_tests:
+  - "subnet-router-create"
+  - "glance-create-boot-delete"
+  - "neutron-securitygroup-port"
+shaker_tests:
+  - "none"
+perfkit_tests:
+  - "none"
+yoda_tests:
+  - "none"
+metadata:
+  - osp-version
