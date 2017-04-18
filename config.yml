@@ -1,4 +1,4 @@
-elastic-host: <elastic-ip-here>
+elastic-host: elk.browbeatproject.org
 elastic-port: 9200
 training-sets:
   - uuid: 353587d2-05de-4705-8cfa-7bd2f87438aa
@@ -11,15 +11,36 @@ validation-sets:
   - uuid: 5f93e46d-f25f-4057-8ee3-c7762005da93
     category: "failing"
     set: "perf-ci"
-rally_tests:
-  - "subnet-router-create"
-  - "glance-create-boot-delete"
-  - "neutron-securitygroup-port"
-shaker_tests:
-  - "none"
-perfkit_tests:
-  - "none"
-yoda_tests:
-  - "none"
+tests:
+  - workload: "rally"
+    test: "authentic-keystone"
+  - workload: "rally"
+    test: "create-and-list-tenants"
+  - workload: "rally"
+    test: "create-list-router"
+  - workload: "rally"
+    test: "create-list-network"
+  - workload: "rally"
+    test: "create-list-subnet"
+  - workload: "rally"
+    test: "create-list-port"
+  - workload: "rally"
+    test: "create-list-security-group"
+  - workload: "rally"
+    test: "boot-snapshot-delete"
+  - workload: "rally"
+    test: "boot-list"
+  - workload: "rally"
+    test: "create-and-delete-image"
+  - workload: "rally"
+    test: "netcreate-5-boot"
+  - workload: "rally"
+    test: "netcreate-10-boot"
+
 metadata:
   - osp-version
+# list of cloud names to grab uuid's for
+clouds:
+  - "microbrow-ha-2-compute-2"
+  - "microbrow-ha-2-compute-1"
+  - "microbrow-ha-2-compute-0"
