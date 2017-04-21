@@ -1,0 +1,75 @@
+# Class for Browbeat_run objects, the goal of this class is to encapsulate a series
+# of tests in an easy to use fashion
+import backend
+from browbeat_test import browbeat_test
+
+class browbeat_run(object):
+
+    # Takes a uuid and a raw set of elastic data to populate the object
+    # in this case raw_elastic is just a dump from elastic for the uuid
+    # disable caching when you need to use less ram at the cost of thrasing
+    # the elastic DB more
+    def __init__(self, elastic_connection, uuid, caching=True):
+        self._caching = caching
+        self._elastic_connection = elastic_connection
+        if self._caching:
+            self._raw_elastic = list(elastic_connection.grab_uuid(uuid))
+        self.uuid = uuid
+
+    def _map_scenario_to_test(self, source):
+        if 'scenario' in source:
+            return source['scenario']
+        elif 'browbeat_scenario' in source:
+            if 'name' in source['browbeat_scenario']:
+                return source['browbeat_scenario']['name']
+            else:
+                return source['browbeat_scenario']
+        else:
+            print("Failed to find test name!")
+            exit(1)
+
+
+    def _map_index_to_workload(self, index):
+        workloads = ['rally', 'shaker', 'perfkit', 'yoda']
+        for workload in workloads:
+            if workload in index:
+                return workload
+        print("Failed to find index!")
+        exit(1)
+
+    #TODO(Add more validations)
+    def _validate_result(self, index_result, test, uuid):
+        if 'result' not in index_result['_type']:
+            #print("UUID " + uuid + " has errors! In test " + test)
+            return False
+        else:
+            return True
+
+    def get_tests(self, workload_search=None,
+                  test_search=None,
+                  concurrency_search=None,
+                  times_search=None):
+        # If we're not caching we need to update the reference to the connection
+        if not self._caching:
+            self._raw_elastic = self._elastic_connection.grab_uuid(self.uuid)
+
+        for index_result in self._raw_elastic:
+            workload = self._map_index_to_workload(index_result['_index'])
+            if workload_search is not None and workload not in workload_search:
+                #print(workload_search + " not in " + workload)
+                continue
+
+            test = self._map_scenario_to_test(index_result['_source'])
+            if not self._validate_result(index_result, test, self.uuid):
+                continue
+            if test_search is not None and test not in test_search:
+                #print(test_search + " not in " + test)
+                continue
+
+            test = browbeat_test(index_result, self.uuid, test, workload)
+            if concurrency_search is not None and test.concurrency != concurrency_search:
+                continue
+            if times_search is not None and test.times != times_search:
+                continue
+
+            yield test

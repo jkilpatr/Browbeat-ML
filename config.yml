@@ -1,11 +1,8 @@
-elastic-host: elk.browbeatproject.org
+elastic-host: localhost
 elastic-port: 9200
 training-sets:
-  - uuid: 353587d2-05de-4705-8cfa-7bd2f87438aa
+  - uuid: acde6660-bbe6-4b4c-a8d8-327543130073
     category: "passing"
-    set: "perf-ci"
-  - uuid: 9e72d8ac-6341-41c6-ad95-59239c125f9a
-    category: "failing"
     set: "perf-ci"
 validation-sets:
   - uuid: 5f93e46d-f25f-4057-8ee3-c7762005da93
