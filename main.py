@@ -31,7 +31,12 @@ def pass_fail(conn, workload, test, uuid_A, uuid_B):
             print("Tests not comparable!")
             continue
         t, p = stats.ttest_ind(A_test.raw, B_test.raw, equal_var=False)
-        print(str(t) + " " + str(p))
+
+        print("Test: " + test + " at concurrency " + str(A_test.concurrency) +" has a p value of " + str(p))
+        if(p < .5):
+            print("These uuid's are statistically different!")
+        else:
+            print("These are statistically similar!")
 
 
 def main():
