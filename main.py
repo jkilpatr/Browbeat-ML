@@ -3,9 +3,13 @@ import sys
 from backend import Backend
 from browbeat_test import browbeat_test
 from browbeat_run import browbeat_run
+import tests
 import tensorflow as tf
 import numpy as np
 from scipy import stats
+from itertools import chain
+import functools
+import pdb
 
 def _load_config(path):
     try:
@@ -17,43 +21,29 @@ def _load_config(path):
     stream.close()
     return config
 
-# Dead simple test, tells you if two tests are significantly different
-def pass_fail(conn, workload, test, uuid_A, uuid_B):
-    A = browbeat_run(conn, uuid_A, caching=False)
-    B = browbeat_run(conn, uuid_B, caching=False)
-    A_tests = list(A.get_tests(workload_search=workload, test_search=test))
-    B_tests = list(B.get_tests(workload_search=workload, test_search=test))
-    A_tests.sort(key=lambda x: x.concurrency)
-    B_tests.sort(key=lambda x: x.concurrency)
-    for A_test, B_test in zip(A_tests,
-                              B_tests):
-        if A_test.concurrency != B_test.concurrency:
-            print("Tests not comparable!")
-            continue
-        t, p = stats.ttest_ind(A_test.raw, B_test.raw, equal_var=False)
-
-        print("Test: " + test + " at concurrency " + str(A_test.concurrency) +" has a p value of " + str(p))
-        if(p < .5):
-            print("These uuid's are statistically different!")
-        else:
-            print("These are statistically similar!")
-
-
 def main():
    config = "config.yml"
    config = _load_config(config)
+   feature_columns = []
+   feature_columns.append(tf.contrib.layers.real_valued_column('raw', dimension=2500))
+   feature_columns.append(tf.contrib.layers.real_valued_column('concurrency'))
+   feature_columns.append(tf.contrib.layers.real_valued_column('runs'))
+   #feature_columns.append(tf.contrib.layers.embedding_column(
+   #                       tf.contrib.layers.sparse_column_with_hash_bucket(column_name='osp_version',
+   #                                                                                  hash_bucket_size=8,
+   #                                                                                  combiner="sqrtn"), 8))
+   #feature_columns.append(tf.contrib.layers.real_valued_column(column_name='outcome'))
    es_backend = Backend(config['elastic-host'],config['elastic-port'])
-   uuid_A = "acde6660-bbe6-4b4c-a8d8-327543130073"
-   uuid_B = "35c5766e-ecf7-4778-a773-b5895c0695a0"
-   for test in config['tests']:
-       pass_fail(es_backend, test['workload'], test['test'], uuid_A, uuid_B)
+   #estimator = tf.contrib.learn.DNNClassifier(feature_columns=feature_columns,
+   #                                           hidden_units=[64, 32])
+   estimator = tf.contrib.learn.LinearClassifier(feature_columns=feature_columns)
+
+   partial_train = functools.partial(tests.tf_svm_train, es_backend, config['training-sets'])
+   estimator.fit(input_fn=partial_train)
+   partial_eval = functools.partial(tests.tf_svm_train, es_backend, config['validation-sets'])
+   estimator.evaluate(input_fn=partial_eval)
+
 
 if __name__ == '__main__':
     sys.exit(main())
-
-
-
-
-
-
 

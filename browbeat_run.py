@@ -9,21 +9,20 @@ class browbeat_run(object):
     # in this case raw_elastic is just a dump from elastic for the uuid
     # disable caching when you need to use less ram at the cost of thrasing
     # the elastic DB more
-    def __init__(self, elastic_connection, uuid, caching=True):
+    def __init__(self, elastic_connection, uuid, caching=True, pass_fail=None):
         self._caching = caching
         self._elastic_connection = elastic_connection
         if self._caching:
+            print("Using caching")
             self._raw_elastic = list(elastic_connection.grab_uuid(uuid))
         self.uuid = uuid
+        # Used for training, pass_fail at the run level right now, should be
+        # brought down to the test level later.
+        self._pass_fail = pass_fail
 
     def _map_scenario_to_test(self, source):
-        if 'scenario' in source:
-            return source['scenario']
-        elif 'browbeat_scenario' in source:
-            if 'name' in source['browbeat_scenario']:
-                return source['browbeat_scenario']['name']
-            else:
-                return source['browbeat_scenario']
+        if 'action' in source:
+            return source['action']
         else:
             print("Failed to find test name!")
             exit(1)
@@ -66,7 +65,7 @@ class browbeat_run(object):
                 #print(test_search + " not in " + test)
                 continue
 
-            test = browbeat_test(index_result, self.uuid, test, workload)
+            test = browbeat_test(index_result, self.uuid, test, workload, training_output=self._pass_fail)
             if concurrency_search is not None and test.concurrency != concurrency_search:
                 continue
             if times_search is not None and test.times != times_search:

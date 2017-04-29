@@ -1,38 +1,105 @@
-elastic-host: localhost
+elastic-host: elk.browbeatproject.org
 elastic-port: 9200
 training-sets:
   - uuid: acde6660-bbe6-4b4c-a8d8-327543130073
-    category: "passing"
+    category: "pass"
+    set: "perf-ci"
+  - uuid: f21d7ecf-e7ce-4818-adc7-44e297b95fc6
+    category: "fail"
+    set: "perf-ci"
+  - uuid: dd52dc23-aa36-40a7-98aa-eb1887f94217
+    category: "fail"
+    set: "perf-ci"
+  - uuid: e5c8e1c5-a3b1-4c64-8795-5f30a0899e57
+    category: "fail"
+    set: "perf-ci"
+  - uuid: 0af5d0ec-2e25-4736-a5bc-01ae3835fa3a
+    category: "pass"
+    set: "perf-ci"
+  - uuid: 0fa7f533-8ac5-483b-bf15-1f1abc0937bd
+    category: "pass"
+    set: "perf-ci"
+  - uuid: 34ab39be-84b5-43ae-a0da-30494c943fc0
+    category: "pass"
+    set: "perf-ci"
+  - uuid: 3f5d8cca-e418-482b-ae75-0159841d55a2
+    category: "pass"
+    set: "perf-ci"
+  - uuid: e5c8e1c5-a3b1-4c64-8795-5f30a0899e57
+    category: "fail"
+    set: "perf-ci"
+  - uuid: 4f86af62-34cb-4246-b3c8-8315983f1c92
+    category: "pass"
+    set: "perf-ci"
+  - uuid: 7ae50c3f-4939-423f-b5d1-63452f4265e0
+    category: "pass"
+    set: "perf-ci"
+  - uuid: 6c085c8f-e12c-419a-aacf-4c1614ea6744
+    category: "pass"
+    set: "perf-ci"
+  - uuid: 3cef6d86-2dba-4c35-b9a0-6c1c8938557e
+    category: "pass"
+    set: "perf-ci"
+  - uuid: 21333858-bec3-4928-afd9-a5006ff1eee2
+    category: "pass"
+    set: "perf-ci"
+  - uuid: 8242e662-258c-4411-adb6-b9ee3f998521
+    category: "pass"
     set: "perf-ci"
 validation-sets:
   - uuid: 5f93e46d-f25f-4057-8ee3-c7762005da93
-    category: "failing"
+    category: "fail"
+    set: "perf-ci"
+  - uuid: 39f029ee-5338-4676-baeb-355b5879521a
+    category: "fail"
+    set: "perf-ci"
+  - uuid: d2654b2a-74cb-4658-aa0d-4688e180e292
+    category: "pass"
+    set: "perf-ci"
+  - uuid: 182cbee0-14f4-436a-9e18-4656893926b5
+    category: "pass"
     set: "perf-ci"
 tests:
   - workload: "rally"
-    test: "authentic-keystone"
+    test: "neutron.create_network"
   - workload: "rally"
-    test: "create-and-list-tenants"
+    test: "neutron.create_subnet"
   - workload: "rally"
-    test: "create-list-router"
+    test: "nova.boot_server"
   - workload: "rally"
-    test: "create-list-network"
+    test: "neutron.create_port"
   - workload: "rally"
-    test: "create-list-subnet"
+    test: "nova.delete_server"
   - workload: "rally"
-    test: "create-list-port"
+    test: "neutron.create_router"
   - workload: "rally"
-    test: "create-list-security-group"
+    test: "neutron.add_interface_router"
   - workload: "rally"
-    test: "boot-snapshot-delete"
+    test: "neutron.list_networks"
   - workload: "rally"
-    test: "boot-list"
+    test: "authenticate.keystone"
   - workload: "rally"
-    test: "create-and-delete-image"
+    test: "nova.create_image"
   - workload: "rally"
-    test: "netcreate-5-boot"
+    test: "nova.delete_image"
   - workload: "rally"
-    test: "netcreate-10-boot"
+    test: "neutron.list_subnets"
+  - workload: "rally"
+    test: "neutron.list_routers"
+  - workload: "rally"
+    test: "neutron.create_security_group"
+  - workload: "rally"
+    test: "neutron.list_ports"
+  - workload: "rally"
+    test: "neutron.list_security_groups"
+  - workload: "rally"
+    test: "nova.list_servers"
+  - workload: "rally"
+    test: "glance.create_image"
+  - workload: "rally"
+    test: "glance.delete_image"
+  - workload: "rally"
+    test: "keystone_v2.create_tenant"
 
 metadata:
   - osp-version
