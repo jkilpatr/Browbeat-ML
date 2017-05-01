@@ -24,8 +24,7 @@ class browbeat_test(object):
         if 'raw' in raw_elastic['_source']:
             return raw_elastic['_source']['raw']
         else:
-            print("That's not supposed to happen!?")
-            exit(1)
+            raise ValueError('Invalid test data!')
 
     # Extracts details of the really run
     def _set_metadata(self, raw_elastic):

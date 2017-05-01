@@ -10,13 +10,35 @@ training-sets:
   - uuid: dd52dc23-aa36-40a7-98aa-eb1887f94217
     category: "fail"
     set: "perf-ci"
-  - uuid: e5c8e1c5-a3b1-4c64-8795-5f30a0899e57
-    category: "fail"
-    set: "perf-ci"
   - uuid: 0af5d0ec-2e25-4736-a5bc-01ae3835fa3a
     category: "pass"
     set: "perf-ci"
   - uuid: 0fa7f533-8ac5-483b-bf15-1f1abc0937bd
+    category: "pass"
+    set: "perf-ci"
+validation-sets:
+  - uuid: e5c8e1c5-a3b1-4c64-8795-5f30a0899e57
+    category: "fail"
+    set: "perf-ci"
+  - uuid: 39f029ee-5338-4676-baeb-355b5879521a
+    category: "fail"
+    set: "perf-ci"
+  - uuid: d2654b2a-74cb-4658-aa0d-4688e180e292
+    category: "pass"
+    set: "perf-ci"
+  - uuid: 182cbee0-14f4-436a-9e18-4656893926b5
+    category: "pass"
+    set: "perf-ci"
+  - uuid: 6c085c8f-e12c-419a-aacf-4c1614ea6744
+    category: "pass"
+    set: "perf-ci"
+  - uuid: 3cef6d86-2dba-4c35-b9a0-6c1c8938557e
+    category: "pass"
+    set: "perf-ci"
+  - uuid: 21333858-bec3-4928-afd9-a5006ff1eee2
+    category: "pass"
+    set: "perf-ci"
+  - uuid: 8242e662-258c-4411-adb6-b9ee3f998521
     category: "pass"
     set: "perf-ci"
   - uuid: 34ab39be-84b5-43ae-a0da-30494c943fc0
@@ -32,31 +54,6 @@ training-sets:
     category: "pass"
     set: "perf-ci"
   - uuid: 7ae50c3f-4939-423f-b5d1-63452f4265e0
-    category: "pass"
-    set: "perf-ci"
-  - uuid: 6c085c8f-e12c-419a-aacf-4c1614ea6744
-    category: "pass"
-    set: "perf-ci"
-  - uuid: 3cef6d86-2dba-4c35-b9a0-6c1c8938557e
-    category: "pass"
-    set: "perf-ci"
-  - uuid: 21333858-bec3-4928-afd9-a5006ff1eee2
-    category: "pass"
-    set: "perf-ci"
-  - uuid: 8242e662-258c-4411-adb6-b9ee3f998521
-    category: "pass"
-    set: "perf-ci"
-validation-sets:
-  - uuid: 5f93e46d-f25f-4057-8ee3-c7762005da93
-    category: "fail"
-    set: "perf-ci"
-  - uuid: 39f029ee-5338-4676-baeb-355b5879521a
-    category: "fail"
-    set: "perf-ci"
-  - uuid: d2654b2a-74cb-4658-aa0d-4688e180e292
-    category: "pass"
-    set: "perf-ci"
-  - uuid: 182cbee0-14f4-436a-9e18-4656893926b5
     category: "pass"
     set: "perf-ci"
 tests:

@@ -11,10 +11,9 @@ class browbeat_run(object):
     # the elastic DB more
     def __init__(self, elastic_connection, uuid, caching=True, pass_fail=None):
         self._caching = caching
-        self._elastic_connection = elastic_connection
+        self._elastic_connection = elastic_connection.grab_uuid(uuid)
         if self._caching:
-            print("Using caching")
-            self._raw_elastic = list(elastic_connection.grab_uuid(uuid))
+            self._tests = None
         self.uuid = uuid
         # Used for training, pass_fail at the run level right now, should be
         # brought down to the test level later.
@@ -48,11 +47,25 @@ class browbeat_run(object):
                   test_search=None,
                   concurrency_search=None,
                   times_search=None):
-        # If we're not caching we need to update the reference to the connection
-        if not self._caching:
-            self._raw_elastic = self._elastic_connection.grab_uuid(self.uuid)
+        if self._caching:
+            if self._tests is None:
+                self._tests = list(self._get_tests())
+            return self._get_tests_list(workload_search=workload_search,
+                                   test_search=test_search,
+                                   concurrency_search=concurrency_search,
+                                   times_search=times_search)
+        else:
+            return self._get_tests(workload_search=workload_search,
+                                   test_search=test_search,
+                                   concurrency_search=concurrency_search,
+                                   times_search=times_search)
 
-        for index_result in self._raw_elastic:
+
+    def _get_tests(self, workload_search=None,
+                  test_search=None,
+                  concurrency_search=None,
+                  times_search=None):
+        for index_result in self._elastic_connection:
             workload = self._map_index_to_workload(index_result['_index'])
             if workload_search is not None and workload not in workload_search:
                 #print(workload_search + " not in " + workload)
@@ -65,10 +78,34 @@ class browbeat_run(object):
                 #print(test_search + " not in " + test)
                 continue
 
-            test = browbeat_test(index_result, self.uuid, test, workload, training_output=self._pass_fail)
+            try:
+                test = browbeat_test(index_result, self.uuid, test, workload, training_output=self._pass_fail)
+            except ValueError:
+                continue
+
             if concurrency_search is not None and test.concurrency != concurrency_search:
                 continue
             if times_search is not None and test.times != times_search:
                 continue
 
             yield test
+
+    def _get_tests_list(self, workload_search=None,
+                  test_search=None,
+                  concurrency_search=None,
+                  times_search=None):
+        ret = []
+        for test in self._tests:
+            if workload_search is not None and test.workload not in workload_search:
+                #print(workload_search + " not in " + workload)
+                continue
+            if test_search is not None and test.name not in test_search:
+                #print(test_search + " not in " + test)
+                continue
+            if concurrency_search is not None and test.concurrency != concurrency_search:
+                continue
+            if times_search is not None and test.times != times_search:
+                continue
+
+            ret.append(test)
+        return ret
