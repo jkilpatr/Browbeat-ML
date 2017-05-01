@@ -2,7 +2,7 @@
 Python scripts for Openstack performance machine learning.
 
 Right now data is pulled out of Elasticsearch formatted, then put through
-a off the shell combined Linear/DNN model. The resulting accuracy is about
+a off the shelf combined Linear/DNN model. The resulting accuracy is about
 76% but considering that I can vastly reduce the amount of training/neurons
 and get the same result my conclusion is that I need to get more training
 vectors into the model.
