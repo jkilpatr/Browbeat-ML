@@ -16,15 +16,14 @@ training-sets:
   - uuid: 0fa7f533-8ac5-483b-bf15-1f1abc0937bd
     category: "pass"
     set: "perf-ci"
-validation-sets:
-  - uuid: e5c8e1c5-a3b1-4c64-8795-5f30a0899e57
-    category: "fail"
-    set: "perf-ci"
-  - uuid: 39f029ee-5338-4676-baeb-355b5879521a
-    category: "fail"
-    set: "perf-ci"
-  - uuid: d2654b2a-74cb-4658-aa0d-4688e180e292
+  - uuid: 8647e0da-62c2-4bee-a016-93cba5427595
     category: "pass"
+    set: "perf-ci"
+  - uuid: 9954944f-1ae7-4567-b7b8-69de45f96cdc
+    category: "fail"
+    set: "perf-ci"
+  - uuid: f264b610-1a63-4b88-910a-87dbc39b479f
+    category: "fail"
     set: "perf-ci"
   - uuid: 182cbee0-14f4-436a-9e18-4656893926b5
     category: "pass"
@@ -40,6 +39,13 @@ validation-sets:
     set: "perf-ci"
   - uuid: 8242e662-258c-4411-adb6-b9ee3f998521
     category: "pass"
+validation-sets:
+  - uuid: 39f029ee-5338-4676-baeb-355b5879521a
+    category: "fail"
+    set: "perf-ci"
+  - uuid: d2654b2a-74cb-4658-aa0d-4688e180e292
+    category: "pass"
+    set: "perf-ci"
     set: "perf-ci"
   - uuid: 34ab39be-84b5-43ae-a0da-30494c943fc0
     category: "pass"

@@ -25,7 +25,8 @@ def main():
    config = "config.yml"
    config = _load_config(config)
    es_backend = Backend(config['elastic-host'],config['elastic-port'])
-   tests.perf_classify(config, es_backend)
+   #tests.perf_classify(config, es_backend)
+   tests.perf_predict(config, es_backend, "neutron.create_network")
 
 if __name__ == '__main__':
     sys.exit(main())

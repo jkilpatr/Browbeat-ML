@@ -23,8 +23,7 @@ class browbeat_run(object):
         if 'action' in source:
             return source['action']
         else:
-            print("Failed to find test name!")
-            exit(1)
+            raise ValueError("Failed to find test name!")
 
 
     def _map_index_to_workload(self, index):
@@ -32,8 +31,7 @@ class browbeat_run(object):
         for workload in workloads:
             if workload in index:
                 return workload
-        print("Failed to find index!")
-        exit(1)
+        raise ValueError('Failed to find index!')
 
     #TODO(Add more validations)
     def _validate_result(self, index_result, test, uuid):
@@ -71,7 +69,10 @@ class browbeat_run(object):
                 #print(workload_search + " not in " + workload)
                 continue
 
-            test = self._map_scenario_to_test(index_result['_source'])
+            try:
+                test = self._map_scenario_to_test(index_result['_source'])
+            except ValueError:
+                continue
             if not self._validate_result(index_result, test, self.uuid):
                 continue
             if test_search is not None and test not in test_search:
@@ -81,6 +82,8 @@ class browbeat_run(object):
             try:
                 test = browbeat_test(index_result, self.uuid, test, workload, training_output=self._pass_fail)
             except ValueError:
+                continue
+            except KeyError:
                 continue
 
             if concurrency_search is not None and test.concurrency != concurrency_search:

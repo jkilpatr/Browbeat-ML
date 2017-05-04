@@ -37,12 +37,28 @@ class Backend(object):
       for uuid in uuids:
         print(uuid)
 
+    def get_uuids_by_action(self, action):
+        results = helpers.scan(self.es, {"query": {"match": {'action': action}}}, size=100,request_timeout=1000)
+
+        if results == []:
+            raise ValueError(uuid + " Has no results!")
+
+        # Use a set for O(1) membership tests
+        uuid_list = set()
+        print("Grabbing list of uuid's matching action " + action)
+        for entry in results:
+            if 'browbeat_uuid' in entry['_source']:
+                uuid = entry['_source']['browbeat_uuid']
+                if uuid not in uuid_list:
+                    uuid_list.add(uuid)
+        return list(uuid_list)
+
+
     # Searches and grabs the raw source data for a Browbeat UUID
     def grab_uuid(self, uuid):
         results = helpers.scan(self.es, {"query": {"match": {'browbeat_uuid': uuid}}}, size=100,request_timeout=1000)
 
         if results == []:
-            print(uuid + " Has no results!")
-            exit(1)
+            raise ValueError(uuid + " Has no results!")
 
         return results
