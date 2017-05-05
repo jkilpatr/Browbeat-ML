@@ -1,4 +1,4 @@
-elastic-host: elk.browbeatproject.org
+elastic-host: elastic.scalelab.redhat.com
 elastic-port: 9200
 training-sets:
   - uuid: acde6660-bbe6-4b4c-a8d8-327543130073

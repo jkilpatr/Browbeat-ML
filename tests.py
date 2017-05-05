@@ -18,17 +18,15 @@ def is_power_of_two(num):
         return True
 
 # Takes a list, vals of arbitrary size scales it up or down to `size`
-# Takes only power of 2 values right now, super simple, probably
-# want to do interpolation or somthing before seriously using it.
 def scale_values(vals, size):
-    if not is_power_of_two(len(vals)) or not is_power_of_two(size):
-        raise ValueError('len(vals)=' + str(len(vals)) + ' size=' + str(size))
     # Scale up
-    elif len(vals) < size:
-        return list(scale_values(vals+vals, size))
+    if len(vals) < size:
+        while len(vals) < size:
+            vals = vals + vals
+        return vals[:size]
     # Scale down
     elif len(vals) > size:
-        return list(scale_values([vals[x] for x in range(int(len(vals)/2))], size))
+        return vals[:size]
     # List is the correct size already
     else:
         return vals
@@ -211,16 +209,14 @@ def tf_train_action(conn, action, uuids):
 
    n = 0
    for uuid in uuids:
-       if n > 1000:
-           break
        print("Building data for " + uuid + " " + str(n) + " samples so far")
        test_runs = browbeat_run(conn, uuid, caching=False).get_tests(test_search=action)
        for test_run in test_runs:
-           if not is_power_of_two(len(test_run.raw)) or type(test_run.raw) is not list:
+           if type(test_run.raw) is not list:
                continue
            n = n + 1
            data['run'].append(test_run.run)
-           data['raw'].append(scale_values(test_run.raw, 256))
+           data['raw'].append(scale_values(test_run.raw, 512))
            prediction_column.append(numpy.mean(test_run.raw))
            data['concurrency'].append(test_run.concurrency)
            data['nodes'].append(test_run.nodes)
@@ -306,7 +302,12 @@ def perf_predict(config, es_backend, action):
 
    partial_train = functools.partial(tf_train_action, es_backend, action, train_set)
 
-   est = tf.contrib.learn.LinearRegressor(feature_columns=deep_columns)
+   est = tf.contrib.learn.LinearRegressor(feature_columns=deep_columns,
+                                          optimizer=tf.train.FtrlOptimizer(
+                                              learning_rate = 0.1,
+                                              l1_regularization_strength=5.0,
+                                              l2_regularization_strength=10.0
+                                          ))
    logging.getLogger().setLevel(logging.INFO)
    #hooks = [ProfilerHook(save_steps=10, output_dir="profiling")]
    est.fit(input_fn=partial_train, steps=100000, monitors=None)
