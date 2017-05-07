@@ -180,7 +180,6 @@ def perf_classify(config, es_backend):
 def tf_train_action(conn, action, uuids):
    NUMERICAL_FEATURES = ["run",
    "concurrency",
-   "raw",
    "nodes",
    "undercloud_cores",
    "undercloud_mem",
@@ -216,7 +215,7 @@ def tf_train_action(conn, action, uuids):
                continue
            n = n + 1
            data['run'].append(test_run.run)
-           data['raw'].append(scale_values(test_run.raw, 512))
+           #data['raw'].append(scale_values(test_run.raw, 512))
            prediction_column.append(numpy.mean(test_run.raw))
            data['concurrency'].append(test_run.concurrency)
            data['nodes'].append(test_run.nodes)
@@ -255,7 +254,6 @@ def tf_train_action(conn, action, uuids):
 def perf_predict(config, es_backend, action):
    NUMERICAL_FEATURES = ["run",
    "concurrency",
-   "raw",
    "nodes",
    "undercloud_cores",
    "undercloud_mem",
@@ -302,15 +300,10 @@ def perf_predict(config, es_backend, action):
 
    partial_train = functools.partial(tf_train_action, es_backend, action, train_set)
 
-   est = tf.contrib.learn.LinearRegressor(feature_columns=deep_columns,
-                                          optimizer=tf.train.FtrlOptimizer(
-                                              learning_rate = 0.1,
-                                              l1_regularization_strength=5.0,
-                                              l2_regularization_strength=10.0
-                                          ))
+   est = tf.contrib.learn.LinearRegressor(feature_columns=deep_columns)
    logging.getLogger().setLevel(logging.INFO)
    #hooks = [ProfilerHook(save_steps=10, output_dir="profiling")]
-   est.fit(input_fn=partial_train, steps=100000, monitors=None)
+   est.fit(input_fn=partial_train, steps=1000000, monitors=None)
    partial_eval = functools.partial(tf_train_action, es_backend, action, validate_set)
    results = est.evaluate(input_fn=partial_eval, steps=1)
    print(results)
