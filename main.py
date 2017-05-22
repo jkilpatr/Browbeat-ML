@@ -26,7 +26,8 @@ def main():
    config = _load_config(config)
    es_backend = Backend(config['elastic-host'],config['elastic-port'])
    #tests.perf_classify(config, es_backend)
-   tests.perf_predict(config, es_backend, "nova.boot_server")
+   tests.perf_predict(config, es_backend, "neutron.create_network")
+   #tests.simple_regression_alarm(config, es_backend, "7d", "11-tripleo")
 
 if __name__ == '__main__':
     sys.exit(main())

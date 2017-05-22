@@ -25,20 +25,21 @@ class Backend(object):
     #  otherwise it's hard to gather a list of training vectors to investigate
     #  Takes forever to run and requires an absurd amount of ram, use with caution
     def get_uuids_by_cloud(self, config):
-      uuids = []
-      for cloud_name in config['clouds']:
-        print(cloud_name)
-        results = helpers.scan(self.es, {"query": {"match": {'cloud_name': cloud_name}}}, size=100,request_timeout=1000)
+        query = {"query": {"match": {'cloud_name': cloud_name}}}
+        uuids = []
+        for cloud_name in config['clouds']:
+            print(cloud_name)
+            results = helpers.scan(self.es, query, size=100,request_timeout=1000)
         for result in results:
-          uuid = result['_source']['browbeat_uuid']
-          if uuid not in uuids:
-            uuids.append(uuid)
-
-      for uuid in uuids:
-        print(uuid)
+            uuid = result['_source']['browbeat_uuid']
+            if uuid not in uuids:
+                uuids.append(uuid)
+        for uuid in uuids:
+            print(uuid)
 
     def get_uuids_by_action(self, action):
-        results = helpers.scan(self.es, {"query": {"match": {'action': action}}}, size=100,request_timeout=1000)
+        query = {"query": {"match": {'action': action}}}
+        results = helpers.scan(self.es, query, size=100,request_timeout=1000)
 
         if results == []:
             raise ValueError(uuid + " Has no results!")
@@ -53,10 +54,35 @@ class Backend(object):
                     uuid_list.add(uuid)
         return list(uuid_list)
 
+    def grab_uuids_by_date(self, version, time_period):
+        query = {
+                  "query": {
+                    "filtered": {
+                      "query": {"match": {'version.osp_version': version}},
+                      "filter": {
+                        "range": {"timestamp":{"gt": "now-" + time_period}}
+                      }
+                    }
+                  }
+                }
+        results = helpers.scan(self.es, query, size=100,request_timeout=1000)
+
+        if results == []:
+            raise ValueError(uuid + " Has no results!")
+
+        # Use a set for O(1) membership tests
+        uuid_list = set()
+        for entry in results:
+            if 'browbeat_uuid' in entry['_source']:
+                uuid = entry['_source']['browbeat_uuid']
+                if uuid not in uuid_list:
+                    uuid_list.add(uuid)
+        return list(uuid_list)
 
     # Searches and grabs the raw source data for a Browbeat UUID
     def grab_uuid(self, uuid):
-        results = helpers.scan(self.es, {"query": {"match": {'browbeat_uuid': uuid}}}, size=100,request_timeout=1000)
+        query = {"query": {"match": {'browbeat_uuid': uuid}}}
+        results = helpers.scan(self.es, query, size=100,request_timeout=1000)
 
         if results == []:
             raise ValueError(uuid + " Has no results!")

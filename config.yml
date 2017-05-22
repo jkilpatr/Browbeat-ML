@@ -1,4 +1,4 @@
-elastic-host: elastic.scalelab.redhat.com
+elastic-host: elk.browbeatproject.org
 elastic-port: 9200
 training-sets:
   - uuid: acde6660-bbe6-4b4c-a8d8-327543130073
@@ -62,6 +62,7 @@ validation-sets:
   - uuid: 7ae50c3f-4939-423f-b5d1-63452f4265e0
     category: "pass"
     set: "perf-ci"
+
 tests:
   - workload: "rally"
     test: "neutron.create_network"
@@ -104,8 +105,10 @@ tests:
   - workload: "rally"
     test: "keystone_v2.create_tenant"
 
-metadata:
-  - osp-version
+watched_versions:
+  - "11-tripleo"
+  - "11-director"
+
 # list of cloud names to grab uuid's for
 clouds:
   - "microbrow-ha-2-compute-2"

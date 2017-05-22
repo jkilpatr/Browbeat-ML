@@ -42,33 +42,33 @@ def split_data(data_set):
             b.append(thing)
     return a, b
 
+# takes a list of uuids, returns list of run objects
+def uuids_to_runs(uuids, es_backend, caching=False):
+    for uuid in uuids:
+        yield browbeat_run(es_backend, uuid, caching=caching)
 
-# Dead simple test, tells you if two tests are significantly different
-def pass_fail(conn, workload, test, A, B):
-    A_tests = list(A.get_tests(workload_search=workload, test_search=test))
-    B_tests = list(B.get_tests(workload_search=workload, test_search=test))
-    A_tests.sort(key=lambda x: x.concurrency)
-    B_tests.sort(key=lambda x: x.concurrency)
-    for A_test, B_test in zip(A_tests,
-                              B_tests):
-        if A_test.concurrency != B_test.concurrency:
-            print("Tests not comparable because of concurrency!")
-            continue
-        elif A_test.run != B_test.run:
-            print("Tests not comparable because of run!")
-            continue
-        elif A_test.times != B_test.times:
-            print("Tests not comparable because of times!")
-            continue
-        t, p = stats.ttest_ind(A_test.raw, B_test.raw, equal_var=False)
+# Takes configured versions and tests and checks for dramatic perf changes
+# during the set period
+def simple_regression_alarm(config, es_backend, time_period, osp_version):
+    uuids = es_backend.grab_uuids_by_date(osp_version, time_period)
+    runs = uuids_to_runs(uuids, es_backend, caching=True)
+    data = {}
+    for test in config['tests']:
+        if test['test'] not in data:
+            data[test['test']] = []
+        runs = uuids_to_runs(uuids, es_backend)
+        for run in runs:
+            for test_run in run.get_tests(test_search=test['test']):
+                data[test['test']].extend(test_run.raw)
+        data[test['test']] = list(map(float, data[test['test']]))
+        data[test['test']] = numpy.std(data[test['test']])
 
-        print("Test: " + test + " at concurrency " + str(A_test.concurrency) +" has a p value of " + str(p))
-        if(p < .5):
-            print("These uuid's are statistically different!")
-        else:
-            print("These are statistically similar!")
 
-# tf.learn training function, grabs a series of tests from a series of uuids
+
+
+
+
+
 #  This function is shamefully messy because it has to deal with all sorts of
 #  issues with the data itself as well as enforce a ton of assumptions
 def tf_train_uuid(conn, tset, tests):
