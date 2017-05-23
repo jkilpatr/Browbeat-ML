@@ -1,7 +1,5 @@
-# Class for Browbeat_run objects, the goal of this class is to encapsulate a series
-# of tests in an easy to use fashion
-import backend
 from browbeat_test import browbeat_test
+
 
 class browbeat_run(object):
 
@@ -25,7 +23,6 @@ class browbeat_run(object):
         else:
             raise ValueError("Failed to find test name!")
 
-
     def _map_index_to_workload(self, index):
         workloads = ['rally', 'shaker', 'perfkit', 'yoda']
         for workload in workloads:
@@ -33,10 +30,9 @@ class browbeat_run(object):
                 return workload
         raise ValueError('Failed to find index!')
 
-    #TODO(Add more validations)
     def _validate_result(self, index_result, test, uuid):
         if 'result' not in index_result['_type']:
-            #print("UUID " + uuid + " has errors! In test " + test)
+            # print("UUID " + uuid + " has errors! In test " + test)
             return False
         else:
             return True
@@ -49,24 +45,23 @@ class browbeat_run(object):
             if self._tests is None:
                 self._tests = list(self._get_tests())
             return self._get_tests_list(workload_search=workload_search,
-                                   test_search=test_search,
-                                   concurrency_search=concurrency_search,
-                                   times_search=times_search)
+                                        test_search=test_search,
+                                        concurrency_search=concurrency_search,
+                                        times_search=times_search)
         else:
             return self._get_tests(workload_search=workload_search,
                                    test_search=test_search,
                                    concurrency_search=concurrency_search,
                                    times_search=times_search)
 
-
     def _get_tests(self, workload_search=None,
-                  test_search=None,
-                  concurrency_search=None,
-                  times_search=None):
+                   test_search=None,
+                   concurrency_search=None,
+                   times_search=None):
         for index_result in self._elastic_connection:
             workload = self._map_index_to_workload(index_result['_index'])
             if workload_search is not None and workload not in workload_search:
-                #print(workload_search + " not in " + workload)
+                # print(workload_search + " not in " + workload)
                 continue
 
             try:
@@ -76,17 +71,22 @@ class browbeat_run(object):
             if not self._validate_result(index_result, test, self.uuid):
                 continue
             if test_search is not None and test not in test_search:
-                #print(test_search + " not in " + test)
+                # print(test_search + " not in " + test)
                 continue
 
             try:
-                test = browbeat_test(index_result, self.uuid, test, workload, training_output=self._pass_fail)
+                test = browbeat_test(index_result,
+                                     self.uuid,
+                                     test,
+                                     workload,
+                                     training_output=self._pass_fail)
             except ValueError:
                 continue
             except KeyError:
                 continue
 
-            if concurrency_search is not None and test.concurrency != concurrency_search:
+            if concurrency_search is not None \
+               and test.concurrency != concurrency_search:
                 continue
             if times_search is not None and test.times != times_search:
                 continue
@@ -94,18 +94,20 @@ class browbeat_run(object):
             yield test
 
     def _get_tests_list(self, workload_search=None,
-                  test_search=None,
-                  concurrency_search=None,
-                  times_search=None):
+                        test_search=None,
+                        concurrency_search=None,
+                        times_search=None):
         ret = []
         for test in self._tests:
-            if workload_search is not None and test.workload not in workload_search:
-                #print(workload_search + " not in " + workload)
+            if workload_search is not None and \
+               test.workload not in workload_search:
+                # print(workload_search + " not in " + workload)
                 continue
             if test_search is not None and test.name not in test_search:
-                #print(test_search + " not in " + test)
+                # print(test_search + " not in " + test)
                 continue
-            if concurrency_search is not None and test.concurrency != concurrency_search:
+            if concurrency_search is not None and \
+               test.concurrency != concurrency_search:
                 continue
             if times_search is not None and test.times != times_search:
                 continue

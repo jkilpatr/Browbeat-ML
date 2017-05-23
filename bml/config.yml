@@ -46,7 +46,6 @@ validation-sets:
   - uuid: d2654b2a-74cb-4658-aa0d-4688e180e292
     category: "pass"
     set: "perf-ci"
-    set: "perf-ci"
   - uuid: 34ab39be-84b5-43ae-a0da-30494c943fc0
     category: "pass"
     set: "perf-ci"
