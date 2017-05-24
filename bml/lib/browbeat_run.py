@@ -67,6 +67,7 @@ class browbeat_run(object):
             try:
                 test = self._map_scenario_to_test(index_result['_source'])
             except ValueError:
+                print("Found scenarios that could not be mapped!")
                 continue
             if not self._validate_result(index_result, test, self.uuid):
                 continue
@@ -81,8 +82,12 @@ class browbeat_run(object):
                                      workload,
                                      training_output=self._pass_fail)
             except ValueError:
+                print("ValueError in test processing " +
+                      str(test) + " For UUID" + self.uuid)
                 continue
             except KeyError:
+                print("KeyError in test processing " +
+                      str(test) + " For UUID" + self.uuid)
                 continue
 
             if concurrency_search is not None \

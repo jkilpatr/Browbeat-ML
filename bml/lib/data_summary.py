@@ -1,6 +1,6 @@
 from browbeat_run import browbeat_run
-from browbeat_test import browbeat_test
 import numpy
+
 
 def longest_test_name(config):
     val = 0
@@ -8,6 +8,7 @@ def longest_test_name(config):
         if len(test['test']) > val:
             val = len(test['test'])
     return val
+
 
 def time_summary(config, es_backend, time_period, osp_version):
     if osp_version is not None:
@@ -23,11 +24,13 @@ def time_summary(config, es_backend, time_period, osp_version):
             print("".ljust(80, "-"))
             print(val)
 
+
 def data_summary(data):
     std_dev = "{:.4f}".format(numpy.std(data)).ljust(10)
     avg = "{:.4f}".format(numpy.mean(data)).ljust(10)
     median = "{:.4f}".format(numpy.median(data)).ljust(10)
     return("Std_dev: " + std_dev + " Avg: " + avg + " Med: " + median)
+
 
 # Used for an easy way to look at run data
 def print_run_details(config, es_backend, uuid):
@@ -38,9 +41,10 @@ def print_run_details(config, es_backend, uuid):
         test_name = test_type['test']
         data = []
         for test_run in brun.get_tests(test_search=test_name):
-            if 'pipeline' in test_run.dlrn_hash or 'trunk' in test_run.dlrn_hash:
+            if 'pipeline' in test_run.dlrn_hash or \
+               'trunk' in test_run.dlrn_hash:
                 return False
             data.extend(test_run.raw)
         output_string += test_name.ljust(padding) + \
-                      " " + data_summary(data) + "\n"
+            " " + data_summary(data) + "\n"
     return output_string

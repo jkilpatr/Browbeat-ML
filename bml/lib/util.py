@@ -1,5 +1,9 @@
 import yaml
 import logging
+import numpy
+import random
+from lib.browbeat_run import browbeat_run
+
 
 def is_power_of_two(num):
     log = numpy.log2(num)
@@ -7,6 +11,7 @@ def is_power_of_two(num):
         return False
     else:
         return True
+
 
 # Takes a list, vals of arbitrary size scales it up or down to `size`
 def scale_values(vals, size):
@@ -22,6 +27,7 @@ def scale_values(vals, size):
     else:
         return vals
 
+
 # Takes an input data set, returns two datasets taken randomly
 def split_data(data_set):
     a = []
@@ -33,10 +39,12 @@ def split_data(data_set):
             b.append(thing)
     return a, b
 
+
 # takes a list of uuids, returns list of run objects
 def uuids_to_runs(uuids, es_backend, caching=False):
     for uuid in uuids:
         yield browbeat_run(es_backend, uuid, caching=caching)
+
 
 def load_config(path):
     try:

@@ -1,17 +1,14 @@
 import tensorflow as tf
-from browbeat_test import browbeat_test
 from browbeat_run import browbeat_run
 import functools
-import logging
-from tensorflow.contrib.hooks import ProfilerHook
-import random
+# from tensorflow.contrib.hooks import ProfilerHook
 
 
 #  This function is shamefully messy because it has to deal with all sorts of
 #  issues with the data itself as well as enforce a ton of assumptions
 def tf_train_uuid(conn, tset, tests):
     FEATURES_PER_TEST = ["_runs", "_concurrency", "_raw"]
-    LABEL_COLUMN = "label"
+    # LABEL_COLUMN = "label" Implied by test structure
     CATEGORICAL_COLUMNS = ["osp_version"]
 
     label_column = []
@@ -23,7 +20,7 @@ def tf_train_uuid(conn, tset, tests):
 
     for test in tests:
         for feature in FEATURES_PER_TEST:
-            all_test_columns[test['test']+feature] = []
+            all_test_columns[test['test'] + feature] = []
 
     for benchmark_run in tset:
         b_run = browbeat_run(conn,
@@ -47,9 +44,9 @@ def tf_train_uuid(conn, tset, tests):
             ruc = []
             test_list = b_run.get_tests(test_search=benchmark['test'],
                                         workload_search=benchmark['workload'])
-            for test_run in : test_list
+            for test_run in test_list:
                 # Times agreement within a test
-                if (len(rc) > 0 and \
+                if (len(rc) > 0 and
                     len(rc[0]) != len(test_run.raw)) or \
                     type(test_run.raw) != list:
                     continue
@@ -66,18 +63,19 @@ def tf_train_uuid(conn, tset, tests):
                 all_test_columns[benchmark['test'] + '_raw'].append(rc)
                 all_test_columns[benchmark['test'] + '_runs'].append(ruc)
         if osp_version is None:
-            raise ValueError('UUID ' + \
-                             benchmark_run['uuid'] + \
-                             ' has no tests that where not skipped')
+            message = 'UUID ' + benchmark_run['uuid']
+            message += ' has no tests that where not skipped'
+            raise ValueError(message)
 
     # Creates one hot vector for representation of OSP_version
+    n = len(categorical_columns['osp_version'])
     categorical_columns['osp_version'] = \
-        tf.SparseTensor(indices=[[i, 0] for i in range(len(categorical_columns['osp_version']))],
-                    values=categorical_columns['osp_version'],
-                    dense_shape=[len(categorical_columns['osp_version']), 1])
+        tf.SparseTensor(indices=[[i, 0] for i in range(n)],
+                        values=categorical_columns['osp_version'],
+                        dense_shape=[n, 1])
 
-    # Converts data to tensors, by default uses the largest format of that dtype
-    # eg float64, int64 etc
+    # Converts data to tensors, by default uses the largest format
+    # of that dtype eg float64, int64 etc
     for column in all_test_columns:
         all_test_columns[column] = tf.constant(all_test_columns[column])
     label_column = tf.constant(label_column)
@@ -86,15 +84,16 @@ def tf_train_uuid(conn, tset, tests):
     data.update(categorical_columns)
     return data, label_column
 
+
 # The goal is to classify performance into a number across all tests
 def perf_classify(config, es_backend):
     FEATURES_PER_TEST = ["_runs", "_concurrency", "_raw"]
-    LABEL_COLUMN = "label"
-    CATEGORICAL_COLUMNS = ["osp_version"]
+    # LABEL_COLUMN = "label" implied explit here for readability
+    # CATEGORICAL_COLUMNS = ["osp_version"] um why isn't this used?
     ALL_TEST_COLUMNS = []
     for test in config['tests']:
         for feature in FEATURES_PER_TEST:
-            ALL_TEST_COLUMNS.append(test['test']+feature)
+            ALL_TEST_COLUMNS.append(test['test'] + feature)
 
     all_test_columns = []
     for column in ALL_TEST_COLUMNS:
@@ -112,16 +111,25 @@ def perf_classify(config, es_backend):
                                                         "10-tripleo",
                                                         "9-director",
                                                         "9-tripleo"])
-    osp_version_embed = tf.contrib.layers.embedding_column(osp_version, dimension=8)
-    wide_columns=[osp_version]
-    deep_columns=[osp_version_embed].extend(all_test_columns)
+    osp_version_embed = tf.contrib.layers.embedding_column(osp_version,
+                                                           dimension=8)
+    wide_columns = [osp_version]
+    deep_columns = [osp_version_embed].extend(all_test_columns)
 
-    partial_train = functools.partial(tf_train_uuid, es_backend, config['training-sets'], config['tests'])
-    est = tf.contrib.learn.DNNLinearCombinedClassifier(linear_feature_columns=wide_columns,
-                                                      dnn_feature_columns=deep_columns,
-                                                      dnn_hidden_units=[2],
-                                                      fix_global_step_increment_bug=True)
-    partial_eval = functools.partial(tf_train_uuid, es_backend, config['validation-sets'], config['tests'])
+    partial_train = functools.partial(tf_train_uuid,
+                                      es_backend,
+                                      config['training-sets'],
+                                      config['tests'])
+
+    est = tf.contrib.learn.DNNLinearCombinedClassifier(linear_feature_columns=wide_columns,  # noqa
+                                                       dnn_feature_columns=deep_columns,  # noqa
+                                                       dnn_hidden_units=[2],  # noqa
+                                                       fix_global_step_increment_bug=True)  # noqa
+    partial_eval = functools.partial(tf_train_uuid,
+                                     es_backend,
+                                     config['validation-sets'],
+                                     config['tests'])
+
     est.fit(input_fn=partial_train, steps=100)
     results = est.evaluate(input_fn=partial_eval, steps=1)
     print(results)

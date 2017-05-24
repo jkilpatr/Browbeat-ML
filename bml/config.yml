@@ -58,9 +58,6 @@ validation-sets:
   - uuid: 4f86af62-34cb-4246-b3c8-8315983f1c92
     category: "pass"
     set: "perf-ci"
-  - uuid: 7ae50c3f-4939-423f-b5d1-63452f4265e0
-    category: "pass"
-    set: "perf-ci"
 
 tests:
   - workload: "rally"

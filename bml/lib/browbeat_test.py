@@ -15,7 +15,7 @@ class browbeat_test(object):
         self._set_metadata(raw_elastic)
         self.raw = self._get_raw_data(raw_elastic)
         # Using during model training, true false for now, to be expanded
-        self._training_output=training_output
+        self._training_output = training_output
 
     def _get_raw_data(self, raw_elastic):
         if 'raw' in raw_elastic['_source']:
@@ -75,7 +75,7 @@ class browbeat_test(object):
         if type(val) is str:
             return val
         else:
-            raise ValueError("String metadata value is not a string!")
+            return str(val)
 
     # Extracts details of the really run
     def _set_metadata(self, raw_elastic):
@@ -85,8 +85,7 @@ class browbeat_test(object):
             raw_elastic['_source']['software-metadata'])
         if 'rally' in self.workload:
             self.concurrency = \
-                raw_elastic['_source']['rally_setup']\
-                           ['kw']['runner']['concurrency']
+                raw_elastic['_source']['rally_setup']['kw']['runner']['concurrency']  # noqa
             self.concurrency = self._typecheck_num(self.concurrency)
             self.times = \
                 raw_elastic['_source']['rally_setup']['kw']['runner']['times']

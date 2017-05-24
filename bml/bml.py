@@ -64,13 +64,13 @@ def main():
     config = lib.util.load_config(args.config)
     es_backend = lib.elastic_backend.Backend(config['elastic-host'],
                                              config['elastic-port'])
-    #tests.perf_classify(config, es_backend)
-    #tests.perf_predict(config, es_backend, "neutron.create_network")
+    # tests.perf_classify(config, es_backend)
+    # tests.perf_predict(config, es_backend, "neutron.create_network")
     if args.days is not -1:
         lib.data_summary.time_summary(config,
-                                     es_backend,
-                                     str(args.days) + "d",
-                                     args.version)
+                                      es_backend,
+                                      str(args.days) + "d",
+                                      args.version)
     elif args.classify is not None:
         lib.perf_classify.perf_classify(config, es_backend)
     elif args.classify_test:
@@ -78,8 +78,10 @@ def main():
     elif args.predict:
         lib.perf_predict()
     elif args.predict_test:
-        tests.perf_predict.perf_predict
+        lib.perf_predict.perf_predict()
+    else:
+        args.error("No arguments defined!")
+
 
 if __name__ == '__main__':
     sys.exit(main())
-
