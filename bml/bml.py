@@ -72,7 +72,7 @@ def main():
                                       str(args.days) + "d",
                                       args.version)
     elif args.classify is not None:
-        lib.perf_classify.perf_classify(config, es_backend)
+        lib.perf_classify.perf_classify(config, es_backend, uuid=args.classify)
     elif args.classify_test:
         lib.perf_classify.perf_classify(config, es_backend)
     elif args.predict:

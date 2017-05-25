@@ -20,8 +20,6 @@ def time_summary(config, es_backend, time_period, osp_version):
     for uuid in uuids:
         val = print_run_details(config, es_backend, uuid)
         if val is not False:
-            print("Browbeat UUID " + uuid)
-            print("".ljust(80, "-"))
             print(val)
 
 
@@ -36,6 +34,7 @@ def data_summary(data):
 def print_run_details(config, es_backend, uuid):
     brun = browbeat_run(es_backend, uuid, caching=True)
     output_string = ""
+    osp_version = ""
     padding = longest_test_name(config)
     for test_type in config['tests']:
         test_name = test_type['test']
@@ -45,6 +44,10 @@ def print_run_details(config, es_backend, uuid):
                'trunk' in test_run.dlrn_hash:
                 return False
             data.extend(test_run.raw)
+            osp_version = test_run.version
         output_string += test_name.ljust(padding) + \
             " " + data_summary(data) + "\n"
+    header = ("Browbeat UUID: " + uuid + " OSP_version: " + osp_version + "\n")
+    header += ("".ljust(80, "-")) + "\n"
+    output_string = header + output_string
     return output_string

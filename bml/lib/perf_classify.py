@@ -1,6 +1,7 @@
 import tensorflow as tf
 from browbeat_run import browbeat_run
 import functools
+import util
 # from tensorflow.contrib.hooks import ProfilerHook
 
 
@@ -86,7 +87,10 @@ def tf_train_uuid(conn, tset, tests):
 
 
 # The goal is to classify performance into a number across all tests
-def perf_classify(config, es_backend):
+def perf_classify(config, es_backend, uuid=None):
+    # We randomize our selection of samples every time
+    training_data, validation_data = util.split_data(config['classify-data'])
+
     FEATURES_PER_TEST = ["_runs", "_concurrency", "_raw"]
     # LABEL_COLUMN = "label" implied explit here for readability
     # CATEGORICAL_COLUMNS = ["osp_version"] um why isn't this used?
@@ -118,18 +122,32 @@ def perf_classify(config, es_backend):
 
     partial_train = functools.partial(tf_train_uuid,
                                       es_backend,
-                                      config['training-sets'],
+                                      training_data,
                                       config['tests'])
 
     est = tf.contrib.learn.DNNLinearCombinedClassifier(linear_feature_columns=wide_columns,  # noqa
                                                        dnn_feature_columns=deep_columns,  # noqa
-                                                       dnn_hidden_units=[2],  # noqa
+                                                       dnn_hidden_units=[12],  # noqa
                                                        fix_global_step_increment_bug=True)  # noqa
     partial_eval = functools.partial(tf_train_uuid,
                                      es_backend,
-                                     config['validation-sets'],
+                                     validation_data,
                                      config['tests'])
 
-    est.fit(input_fn=partial_train, steps=100)
-    results = est.evaluate(input_fn=partial_eval, steps=1)
-    print(results)
+    est.fit(input_fn=partial_train, steps=10000)
+    if uuid is None:
+        results = est.evaluate(input_fn=partial_eval, steps=10)
+        print(results['accuracy'])
+    else:
+        partial_predict = functools.partial(tf_train_uuid,
+                                            es_backend,
+                                            [{'uuid': uuid, 'category': None}],
+                                            config['tests'])
+        results = est.predict_classes(input_fn=partial_predict)
+        for out in results:
+            if int(out) == 1:
+                print("UUID " + uuid + " has been classified as Passing!")
+                exit(0)
+            else:
+                print("UUID " + uuid + " has been classified as Failing!")
+                exit(0)

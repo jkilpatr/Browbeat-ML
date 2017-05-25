@@ -1,6 +1,6 @@
 elastic-host: elk.browbeatproject.org
 elastic-port: 9200
-training-sets:
+classify-data:
   - uuid: acde6660-bbe6-4b4c-a8d8-327543130073
     category: "pass"
     set: "perf-ci"
@@ -39,12 +39,15 @@ training-sets:
     set: "perf-ci"
   - uuid: 8242e662-258c-4411-adb6-b9ee3f998521
     category: "pass"
-validation-sets:
-  - uuid: 39f029ee-5338-4676-baeb-355b5879521a
+    set: "perf-ci"
+  - uuid: 0da8249c-afa8-4d72-bc62-857630ffdd1c
     category: "fail"
     set: "perf-ci"
-  - uuid: d2654b2a-74cb-4658-aa0d-4688e180e292
+  - uuid: 9adbd05b-e643-473d-a9aa-d40587ae9c7c
     category: "pass"
+    set: "perf-ci"
+  - uuid: 39f029ee-5338-4676-baeb-355b5879521a
+    category: "fail"
     set: "perf-ci"
   - uuid: 34ab39be-84b5-43ae-a0da-30494c943fc0
     category: "pass"
@@ -104,6 +107,11 @@ tests:
 watched_versions:
   - "11-tripleo"
   - "11-director"
+  - "12-director"
+  - "master-tripleo"
+  - "master-director"
+  - "10-tripleo"
+  - "10-director"
 
 # list of cloud names to grab uuid's for
 clouds:

@@ -14,10 +14,11 @@ class Backend(object):
              'port': port}],
             send_get_body_as='POST',
             retries=True,
-            sniff_on_start=False,
+            sniff_on_start=True,
             sniff_on_connection_fail=True,
-            sniffer_timeout=60,
-            timeout=60)
+            sniff_timeout=10,
+            sniffer_timeout=120,
+            timeout=120)
 
     def get_uuids_by_action(self, action):
         query = {"query": {"match": {'action': action}}}

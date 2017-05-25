@@ -1,28 +1,86 @@
 # Browbeat-ML
-Python scripts for Openstack performance machine learning.
+Python Library for Openstack performance machine learning.
 
-What this project does is provide an easy way to stream Browbeat performance
-results out of ElasticSearch and into a `browbeat_run` object, identified by
-the Browbeat uuid. From there you can search for any number of `browbeat_test`
-objects each of which represent a single action as indexed by Browbeat, a single
-benchmark may have many.
+Browbeat-ML or bml is a small project to apply machine learning to OpenStack
+performance data specifically data gathered in the Openstack Browbeat metadata
+format. Right now we only support Rally based tests, although other backends
+are easy enough to integrate.
 
-The `browbeat_test` class parses the test data and provides a simple way to
-retrieve test metadata such as CPU, kernel, machine type, raw test data, and
-various other test, hardware, and software specific metadata.
+To install run
 
-From that point the challenge is feeding this data into TensorFlow and making
-effective models. The `tests.py` file is pretty much a dumping ground for
-various models and the utility functions required to make them work.
+	pip install git+https://github.com/jkilpatr/Browbeat-ML
 
-There are two major models provided right now, `perf_classify` and `perf_predict`
+I suggest using a venv as the requirements for this project are sizeable and you
+might not want them in your native python environment.
 
-`perf_classify` is a manually classified test in which we attempt to train a network
-to identify several potential classifications, at this point these are only pass
-and fail, it's about 76% accurate with the current fairly small number of samples.
+##Usage
 
-`perf_predict` on the other hand is an attempt at predicting the performance of
-a single rally action on arbitrary hardware with an arbitrary number of nodes by
-automatically training on all appropriate data in the ElasticSearch it's pointed
-at. It's proven to be within 10% or so of the actual value for the dataset in
-ElasticSearch but it's real ability to generalize remains difficult to determine.
+You can either interact with the utilities through the provided command line
+options or import the libraries provided by this package to use in your own
+scripts.
+
+###Provided Commands
+
+First off the config file format, if you're inside RedHat the default config
+file will work out of the box. If you want to use this with your own ElasticSearch
+there's some setup to do. Take a look at the default config in `bml/config.yml`
+the fields are fairly self explanatory. To pass your own at runtime do the following.
+
+	bml -c <path to config> <other commands>
+
+Once bml is setup there are several functions to use. `-s` will print a summary
+of every test run up to `n` days in the past. This is useful for getting an
+overview of data as it comes in.
+
+	bml -s <n>
+	bml --summary <n>
+
+The two existing machine learning models are perf classify and perf predict.
+Perf classify is an attempt at automatically flagging problem builds by training
+a combined Linear/DNN model to separate a provided Browbeat UUID into 'pass' and
+'needs attention' builds. Right now it's accuracy varies between 55% and 70%
+depending on how the randomized split of training data and evaluation data goes
+which means I don't have a good distribution of examples for training data.
+
+	bml --classify <browbeat UUID>
+
+This will train the model and classify a UUID, don't trust it right now. As I said
+before this model needs more training data before it's anywhere near ready.
+
+	bml --classify-test
+
+This is used to test model changes and evaluate the model, it trains and then
+evaluates the model.
+
+Perf predict is even more experimental than perf classify, it's an attempt
+at a model that feeds in lots of Browbeat metadata and test results and then
+attempts to predict the performance of a given rally action on arbitrary hardware
+for arbitrary concurrency, right now there's no wizard to guide you through
+actually using this model and only the testing code is written.
+
+	bml --predict_test
+
+Don't run the above if you don't have awhile, instead of relying on explicit
+training examples this model willl train itself on all available Browbeat data
+for that rally action in whatever ElasticSearch instance you point it at. This
+can take upwards of an hour to process all the data and train. Or many many hours
+if your not using a GPU.
+
+
+###Using BML as a python library
+
+If you're just looking for a way to easily manipulate performance test data in
+ElasticSearch bml's internal classes are abstracted enough to use as a library
+easily. The following will run through all tests in a UUID And print the raw
+results. Metadata is also parsed for you and is made easily available as class
+objects. Please see `bml/lib/browbeat_test.py` for the full ever expanding list.
+
+	from bml.lib.elastic_backend import Backend
+	from bml.lib.browbeat_run import browbeat_run
+
+	elastic = Backend("elk.browbeatproject.org", "9200")
+	test_run = browbeat_run(elastic, "68c82031-96ef-4cfa-bf53-1aea21aab565")
+	for test in test_run.get_tests():
+	   print(test.name)
+	   print(test.raw)
+
