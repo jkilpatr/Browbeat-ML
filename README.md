@@ -3,7 +3,7 @@ Python Library for Openstack performance machine learning.
 
 Browbeat-ML or bml is a small project to apply machine learning to OpenStack
 performance data specifically data gathered in the Openstack Browbeat metadata
-format. Right now we only support Rally based tests, although other backends
+format. Right now bml only supports Rally based tests, although other backends
 are easy enough to integrate.
 
 To install run
