@@ -13,13 +13,13 @@ To install run
 I suggest using a venv as the requirements for this project are sizeable and you
 might not want them in your native python environment.
 
-##Usage
+## Usage
 
 You can either interact with the utilities through the provided command line
 options or import the libraries provided by this package to use in your own
 scripts.
 
-###Provided Commands
+### Provided Commands
 
 First off the config file format, if you're inside RedHat the default config
 file will work out of the box. If you want to use this with your own ElasticSearch
@@ -67,7 +67,7 @@ can take upwards of an hour to process all the data and train. Or many many hour
 if your not using a GPU.
 
 
-###Using BML as a python library
+### Using BML as a python library
 
 If you're just looking for a way to easily manipulate performance test data in
 ElasticSearch bml's internal classes are abstracted enough to use as a library
