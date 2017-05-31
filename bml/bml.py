@@ -26,6 +26,10 @@ def parse_args():
     parser.add_argument('-s', '--summary', dest="days", type=int, default=-1,
                         help='-s N summary of last N days of results')
 
+    parser.add_argument('--summary-uuid', dest="summary_uuid", type=str,
+                        default=None,
+                        help='--summary-uuid UUID summary of a specific uuid')
+
     parser.add_argument('-v', '--osp-version', dest='version', type=str,
                         default=None,
                         help='-v 11-tripleo only returns hits for that \
@@ -64,13 +68,13 @@ def main():
     config = lib.util.load_config(args.config)
     es_backend = lib.elastic_backend.Backend(config['elastic-host'],
                                              config['elastic-port'])
-    # tests.perf_classify(config, es_backend)
-    # tests.perf_predict(config, es_backend, "neutron.create_network")
     if args.days is not -1:
         lib.data_summary.time_summary(config,
                                       es_backend,
                                       str(args.days) + "d",
                                       args.version)
+    elif args.summary_uuid is not None:
+        lib.data_summary.summary_uuid(es_backend, config, args.summary_uuid)
     elif args.classify is not None:
         lib.perf_classify.perf_classify(config, es_backend, uuid=args.classify)
     elif args.classify_test:

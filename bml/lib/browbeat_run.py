@@ -83,11 +83,11 @@ class browbeat_run(object):
                                      training_output=self._pass_fail)
             except ValueError:
                 print("ValueError in test processing " +
-                      str(test) + " For UUID" + self.uuid)
+                      str(test) + " For UUID: " + self.uuid)
                 continue
             except KeyError:
                 print("KeyError in test processing " +
-                      str(test) + " For UUID" + self.uuid)
+                      str(test) + " For UUID: " + self.uuid)
                 continue
 
             if concurrency_search is not None \

@@ -2,6 +2,7 @@ import tensorflow as tf
 from browbeat_run import browbeat_run
 import functools
 import util
+import logging
 # from tensorflow.contrib.hooks import ProfilerHook
 
 
@@ -89,7 +90,11 @@ def tf_train_uuid(conn, tset, tests):
 # The goal is to classify performance into a number across all tests
 def perf_classify(config, es_backend, uuid=None):
     # We randomize our selection of samples every time
-    training_data, validation_data = util.split_data(config['classify-data'])
+    training_data, validation_data = util.split_data(config['classify-data'],
+                                                     .3)
+    if len(validation_data) > len(training_data):
+        print("You probably didn't intend to do this")
+        exit(1)
 
     FEATURES_PER_TEST = ["_runs", "_concurrency", "_raw"]
     # LABEL_COLUMN = "label" implied explit here for readability
@@ -127,13 +132,16 @@ def perf_classify(config, es_backend, uuid=None):
 
     est = tf.contrib.learn.DNNLinearCombinedClassifier(linear_feature_columns=wide_columns,  # noqa
                                                        dnn_feature_columns=deep_columns,  # noqa
-                                                       dnn_hidden_units=[12],  # noqa
+                                                       dnn_hidden_units=[10,10,10],  # noqa
+                                                       dnn_dropout=0.5,  # noqa
+                                                       n_classes=2,  # noqa
                                                        fix_global_step_increment_bug=True)  # noqa
     partial_eval = functools.partial(tf_train_uuid,
                                      es_backend,
                                      validation_data,
                                      config['tests'])
 
+    logging.getLogger().setLevel(logging.INFO)
     est.fit(input_fn=partial_train, steps=10000)
     if uuid is None:
         results = est.evaluate(input_fn=partial_eval, steps=10)

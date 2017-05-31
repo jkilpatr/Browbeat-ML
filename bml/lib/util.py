@@ -29,11 +29,11 @@ def scale_values(vals, size):
 
 
 # Takes an input data set, returns two datasets taken randomly
-def split_data(data_set):
+def split_data(data_set, split=.5):
     a = []
     b = []
     for thing in data_set:
-        if random.random() > .5:
+        if random.random() > split:
             a.append(thing)
         else:
             b.append(thing)

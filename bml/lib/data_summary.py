@@ -23,6 +23,12 @@ def time_summary(config, es_backend, time_period, osp_version):
             print(val)
 
 
+def summary_uuid(es_backend, config, uuid):
+    val = print_run_details(config, es_backend, uuid)
+    if val is not False:
+        print(val)
+
+
 def data_summary(data):
     std_dev = "{:.4f}".format(numpy.std(data)).ljust(10)
     avg = "{:.4f}".format(numpy.mean(data)).ljust(10)
