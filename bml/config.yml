@@ -97,6 +97,24 @@ classify-data:
   - uuid: abf28a03-b573-477e-8ef5-f763926d8113
     category: "fail"
     set: "perf-ci"
+  - uuid: 784b9a7d-2a25-4d92-9d21-380a8cc8761a
+    category: "pass"
+    set: "perf-ci"
+  - uuid: 7eb04d86-904a-4e40-b638-f24b3ddcdcc9
+    category: "pass"
+    set: "perf-ci"
+  - uuid: 7eb04d86-904a-4e40-b638-f24b3ddcdcc9
+    category: "pass"
+    set: "perf-ci"
+  - uuid: 9adbd05b-e643-473d-a9aa-d40587ae9c7c
+    category: "pass"
+    set: "perf-ci"
+  - uuid: a2bdf706-fd27-4903-8a08-c9dcaab03a08
+    category: "pass"
+    set: "perf-ci"
+  - uuid: 08dc1fb6-6df7-4f4d-9578-d8e676068547
+    category: "pass"
+    set: "perf-ci"
 
 tests:
   - workload: "rally"

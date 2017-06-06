@@ -1,7 +1,7 @@
 import tensorflow as tf
-from browbeat_run import browbeat_run
+from lib.browbeat_run import browbeat_run
 import functools
-import util
+import lib.util
 import logging
 # from tensorflow.contrib.hooks import ProfilerHook
 
@@ -48,19 +48,16 @@ def tf_train_uuid(conn, tset, tests):
                                         workload_search=benchmark['workload'])
             for test_run in test_list:
                 # Times agreement within a test
-                if (len(rc) > 0 and
-                    len(rc[0]) != len(test_run.raw)) or \
-                    type(test_run.raw) != list:
-                    continue
-                rc.append(test_run.raw)
+                rc.append(util.scale_values(test_run.raw, 512))
                 cc.append(test_run.concurrency)
                 ruc.append(test_run.run)
                 if osp_version is None:
                     osp_version = test_run.version
                     categorical_columns['osp_version'].append(osp_version)
-            # Times agreement across runs
-            ll = len(all_test_columns[benchmark['test'] + '_raw'])
-            if len(rc) > 0 and ll > 0 and ll == len(rc):
+            prev_run = len(all_test_columns[benchmark['test'] + '_concurrency']) > 0
+            if prev_run:
+                prev_size = len(all_test_columns[benchmark['test'] + '_concurrency'][-1])
+            if (prev_run and prev_size == len(cc)) or not prev_run and len(cc) > 0:
                 all_test_columns[benchmark['test'] + '_concurrency'].append(cc)
                 all_test_columns[benchmark['test'] + '_raw'].append(rc)
                 all_test_columns[benchmark['test'] + '_runs'].append(ruc)
@@ -79,6 +76,8 @@ def tf_train_uuid(conn, tset, tests):
     # Converts data to tensors, by default uses the largest format
     # of that dtype eg float64, int64 etc
     for column in all_test_columns:
+        if len(all_test_columns[column]) == 0:
+            raise ValueError("No data made it to the network for " + column)
         all_test_columns[column] = tf.constant(all_test_columns[column])
     label_column = tf.constant(label_column)
     data = {}
@@ -89,7 +88,7 @@ def tf_train_uuid(conn, tset, tests):
 
 # The goal is to classify performance into a number across all tests
 def perf_classify(config, es_backend, uuid=None):
-    # We randomize our selection of samples every time
+    # Take 30% of the data for validation and 70% for training at random
     training_data, validation_data = util.split_data(config['classify-data'],
                                                      .3)
     if len(validation_data) > len(training_data):
@@ -132,7 +131,7 @@ def perf_classify(config, es_backend, uuid=None):
 
     est = tf.contrib.learn.DNNLinearCombinedClassifier(linear_feature_columns=wide_columns,  # noqa
                                                        dnn_feature_columns=deep_columns,  # noqa
-                                                       dnn_hidden_units=[10,10,10],  # noqa
+                                                       dnn_hidden_units=[10],  # noqa
                                                        dnn_dropout=0.5,  # noqa
                                                        n_classes=2,  # noqa
                                                        fix_global_step_increment_bug=True)  # noqa

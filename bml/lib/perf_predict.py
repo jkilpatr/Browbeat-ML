@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy
-from browbeat_run import browbeat_run
-import util
+from lib.browbeat_run import browbeat_run
+import lib.util
 import functools
 import logging
 

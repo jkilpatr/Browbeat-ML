@@ -1,4 +1,4 @@
-from browbeat_run import browbeat_run
+from lib.browbeat_run import browbeat_run
 import numpy
 
 

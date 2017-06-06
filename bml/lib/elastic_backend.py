@@ -44,9 +44,15 @@ class Backend(object):
         query = {  # noqa
                   "query": {  # noqa
                     "filtered": {  # noqa
-                      "query": {"match": {'version.osp_version': version}},  # noqa
+                      "query": {"match": {'version.osp_version': version}}, # noqa
                       "filter": {  # noqa
-                        "range": {"timestamp": {"gt": "now-" + time_period}}  # noqa
+                        "range": {"timestamp": {"gt": "now-" + time_period}}
+                      },  # noqa
+                      "filter": {  # noqa
+                        "term": {'cloud_name': 'microbrow-ha-2-compute-1'} # noqa
+                      },  # noqa
+                      "filter": {  # noqa
+                        "term": {'cloud_name': 'microbrow-ha-2-compute-2'} # noqa
                       }  # noqa
                     }  # noqa
                   }  # noqa
