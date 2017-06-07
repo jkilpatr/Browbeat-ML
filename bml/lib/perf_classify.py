@@ -48,17 +48,19 @@ def tf_train_uuid(conn, tset, tests):
                                         workload_search=benchmark['workload'])
             for test_run in test_list:
                 # Times agreement within a test
-                rc.append(util.scale_values(test_run.raw, 512))
+                rc.append(lib.util.scale_values(test_run.raw, 512))
                 cc.append(test_run.concurrency)
                 ruc.append(test_run.run)
                 if osp_version is None:
                     osp_version = test_run.version
                     categorical_columns['osp_version'].append(osp_version)
-            prev_run = len(all_test_columns[benchmark['test'] + '_concurrency']) > 0
+            con = all_test_columns[benchmark['test'] + '_concurrency']
+            prev_run = len(con) > 0
             if prev_run:
-                prev_size = len(all_test_columns[benchmark['test'] + '_concurrency'][-1])
-            if (prev_run and prev_size == len(cc)) or not prev_run and len(cc) > 0:
-                all_test_columns[benchmark['test'] + '_concurrency'].append(cc)
+                prev_size = len(con[-1])
+            if (prev_run and prev_size == len(cc)) or not \
+               prev_run and len(cc) > 0:
+                con.append(cc)
                 all_test_columns[benchmark['test'] + '_raw'].append(rc)
                 all_test_columns[benchmark['test'] + '_runs'].append(ruc)
         if osp_version is None:
@@ -89,8 +91,9 @@ def tf_train_uuid(conn, tset, tests):
 # The goal is to classify performance into a number across all tests
 def perf_classify(config, es_backend, uuid=None):
     # Take 30% of the data for validation and 70% for training at random
-    training_data, validation_data = util.split_data(config['classify-data'],
-                                                     .3)
+    training_data, validation_data = \
+        lib.util.split_data(config['classify-data'],
+                            .3)
     if len(validation_data) > len(training_data):
         print("You probably didn't intend to do this")
         exit(1)

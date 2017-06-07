@@ -40,24 +40,28 @@ class browbeat_run(object):
     def get_tests(self, workload_search=None,
                   test_search=None,
                   concurrency_search=None,
-                  times_search=None):
+                  times_search=None,
+                  scenario_search=None):
         if self._caching:
             if self._tests is None:
                 self._tests = list(self._get_tests())
             return self._get_tests_list(workload_search=workload_search,
                                         test_search=test_search,
                                         concurrency_search=concurrency_search,
-                                        times_search=times_search)
+                                        times_search=times_search,
+                                        scenario_search=scenario_search)
         else:
             return self._get_tests(workload_search=workload_search,
                                    test_search=test_search,
                                    concurrency_search=concurrency_search,
-                                   times_search=times_search)
+                                   times_search=times_search,
+                                   scenario_search=scenario_search)
 
     def _get_tests(self, workload_search=None,
                    test_search=None,
                    concurrency_search=None,
-                   times_search=None):
+                   times_search=None,
+                   scenario_search=None):
         for index_result in self._elastic_connection:
             workload = self._map_index_to_workload(index_result['_index'])
             if workload_search is not None and workload not in workload_search:
@@ -90,6 +94,9 @@ class browbeat_run(object):
                       str(test) + " For UUID: " + self.uuid)
                 continue
 
+            if scenario_search is not None \
+               and scenario_search not in test.scenario_name:
+                continue
             if concurrency_search is not None \
                and test.concurrency != concurrency_search:
                 continue
@@ -101,7 +108,8 @@ class browbeat_run(object):
     def _get_tests_list(self, workload_search=None,
                         test_search=None,
                         concurrency_search=None,
-                        times_search=None):
+                        times_search=None,
+                        scenario_search=None):
         ret = []
         for test in self._tests:
             if workload_search is not None and \
@@ -115,6 +123,9 @@ class browbeat_run(object):
                test.concurrency != concurrency_search:
                 continue
             if times_search is not None and test.times != times_search:
+                continue
+            if scenario_search is not None \
+               and scenario_search not in test.scenario_name:
                 continue
 
             ret.append(test)

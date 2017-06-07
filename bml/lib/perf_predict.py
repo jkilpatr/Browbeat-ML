@@ -143,7 +143,7 @@ def perf_predict(config, es_backend, action):
     wide_columns.extend(numerical_columns)
 
     all_action_uuids = es_backend.get_uuids_by_action(action)
-    train_set, validate_set = util.split_data(all_action_uuids)
+    train_set, validate_set = lib.util.split_data(all_action_uuids)
 
     partial_train = functools.partial(tf_train_action,
                                       es_backend,
