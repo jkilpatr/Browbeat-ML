@@ -67,7 +67,7 @@ class browbeat_run(object):
             try:
                 test = self._map_scenario_to_test(index_result['_source'])
             except ValueError:
-                print("Found scenarios that could not be mapped!")
+                # print("Found scenarios that could not be mapped!")
                 continue
             if not self._validate_result(index_result, test, self.uuid):
                 continue

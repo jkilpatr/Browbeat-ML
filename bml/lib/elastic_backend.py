@@ -47,12 +47,6 @@ class Backend(object):
                       "query": {"match": {'version.osp_version': version}}, # noqa
                       "filter": {  # noqa
                         "range": {"timestamp": {"gt": "now-" + time_period}}
-                      },  # noqa
-                      "filter": {  # noqa
-                        "term": {'cloud_name': 'microbrow-ha-2-compute-1'} # noqa
-                      },  # noqa
-                      "filter": {  # noqa
-                        "term": {'cloud_name': 'microbrow-ha-2-compute-2'} # noqa
                       }  # noqa
                     }  # noqa
                   }  # noqa

@@ -49,6 +49,9 @@ def print_run_details(config, es_backend, uuid):
             if 'pipeline' in test_run.dlrn_hash or \
                'trunk' in test_run.dlrn_hash:
                 return False
+            elif 'HA' not in test_run.cloud_name and \
+                 'ha' not in test_run.cloud_name:
+                return False
             data.extend(test_run.raw)
             osp_version = test_run.version
         output_string += test_name.ljust(padding) + \

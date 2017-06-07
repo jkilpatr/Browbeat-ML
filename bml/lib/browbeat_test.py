@@ -96,3 +96,4 @@ class browbeat_test(object):
             self.run = raw_elastic['_source']['iteration']
             self.run = self._typecheck_num(self.run)
             self.dlrn_hash = raw_elastic['_source']['version']['dlrn_hash']
+            self.scenario_name = raw_elastic['_source']['rally_setup']['name']

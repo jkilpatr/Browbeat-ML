@@ -166,6 +166,10 @@ watched_versions:
   - "master-director"
   - "10-tripleo"
   - "10-director"
+  - "9-tripleo"
+  - "9-director"
+  - "8-tripleo"
+  - "8-director"
 
 # list of cloud names to grab uuid's for
 clouds:
