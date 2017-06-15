@@ -27,11 +27,13 @@ class browbeat_test(object):
         self.nodes = len(hardware_details)
         self.os_name = hardware_details[0]['os_name']
         self.os_name = self._typecheck_string(self.os_name)
+        self.kernel = hardware_details[0]['kernel']
+        self.kernel = self._typecheck_string(self.kernel)
         self.controller = {}
         self.compute = {}
         self.undercloud = {}
         for node in hardware_details:
-            if 'undercloud' in node['label'] and not len(self.undercloud):
+           if 'undercloud' in node['label'] and not len(self.undercloud):
                 self.undercloud['machine_make'] \
                     = self._typecheck_string(node['machine_make'])
                 self.undercloud['processor_type'] \
@@ -40,7 +42,7 @@ class browbeat_test(object):
                     = self._typecheck_num(node['total_mem'])
                 self.undercloud['cores'] \
                     = self._typecheck_num(node['total_logical_cores'])
-            elif 'controller' in node['label'] and not len(self.controller):
+           elif 'controller' in node['label'] and not len(self.controller):
                 self.controller['machine_make'] \
                     = self._typecheck_string(node['machine_make'])
                 self.controller['processor_type'] \
@@ -49,7 +51,7 @@ class browbeat_test(object):
                     = self._typecheck_num(node['total_mem'])
                 self.controller['cores'] \
                     = self._typecheck_num(node['total_logical_cores'])
-            elif 'compute' in node['label'] and not len(self.compute):
+           elif 'compute' in node['label'] and not len(self.compute):
                 self.compute['machine_make'] \
                     = self._typecheck_string(node['machine_make'])
                 self.compute['processor_type'] \
@@ -97,3 +99,9 @@ class browbeat_test(object):
             self.run = self._typecheck_num(self.run)
             self.dlrn_hash = raw_elastic['_source']['version']['dlrn_hash']
             self.scenario_name = raw_elastic['_source']['rally_setup']['name']
+            self.timestamp=raw_elastic['_source']['timestamp']
+            self.no_computes=raw_elastic['_source']['environment-metadata']['environment_setup']['osp_computes_number']
+            self.no_controller=raw_elastic['_source']['environment-metadata']['environment_setup']['osp_controllers_number']
+            self.errortype=raw_elastic['_type']
+
+            

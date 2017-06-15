@@ -175,4 +175,6 @@ watched_versions:
 clouds:
   - "microbrow-ha-2-compute-2"
   - "microbrow-ha-2-compute-1"
-  - "microbrow-ha-2-compute-0"
+  - "microbrow-HA-2-compute-2"
+  - "microbrow-HA-2-compute-1"
+
