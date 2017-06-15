@@ -1,4 +1,5 @@
 from lib.browbeat_run import browbeat_run
+from lib.dtree_classifier import classify_value
 import numpy
 import sqlite3
 import cPickle
@@ -6,36 +7,8 @@ from sklearn.svm import SVC
 from sklearn.svm import LinearSVC
 from sklearn.svm import NuSVC
 from sklearn.tree import DecisionTreeClassifier
+import json
 
-osp_version_dic={"10-director":1,"10-tripleo":2,"11-director":3,"11-tripleo":4,"12-director":5,"master-tripleo":6,"9-director":7,"9-tripleo":8}
-test_name_dic={"authenticate.keystone":1,
-"glance.create_image":2,
-"glance.delete_image":3,
-"keystone_v2.create_tenant":4,
-"neutron.add_interface_router":5,
-"BrowbeatPlugin.create_network_nova_boot.neutron.create_network":61,
-"NeutronNetworks.create_and_list_routers.neutron.create_network":62,
-"NeutronNetworks.create_and_list_subnets.neutron.create_network":63,
-"NeutronNetworks.create_and_list_ports.neutron.create_network":64,
-"NeutronNetworks.create_and_list_networks.neutron.create_network":65,
-"neutron.create_port":7,
-"neutron.create_router":8,
-"neutron.create_security_group":9,
-"NeutronNetworks.create_and_list_subnets.neutron.create_subnet":101,
-"NeutronNetworks.create_and_list_routers.neutron.create_subnet":102,
-"BrowbeatPlugin.create_network_nova_boot.neutron.create_subnet":103,
-"neutron.list_networks":11,
-"neutron.list_ports":12,
-"neutron.list_routers":13,
-"neutron.list_security_groups":14,
-"neutron.list_subnets":15,
-"nova.boot_server":16,
-"nova.create_image":17,
-"nova.delete_image":18,
-"nova.delete_server":19,
-"nova.list_servers":20}
-
-test_with_scenario_list=["neutron.create_network","neutron.create_subnet"]
 
 
 def longest_test_name(config):
@@ -99,19 +72,12 @@ def print_run_details(config, es_backend, uuid):
         output_string += test_name.ljust(padding) + \
             " " + str(average_runtime)  #typecasting data_summary(data) to string because if it returns false it's going to throw an error
         if float(average_runtime)>0.0 and test_run.errortype=="result" and test_name!="nova.boot_server":
-            if str(test_name) in test_with_scenario_list:
+            if str(test_name) in config['test_with_scenario_list']:
                 test_name=str(test_run.scenario_name)+"."+str(test_name)
-            predictors=numpy.array([0,1,2])
-            predictors[0]=osp_version_dic[str(osp_version)]
-            predictors[1]=test_name_dic[str(test_name)]
-            predictors[2]=float(average_runtime)
-            predictors.reshape(1, -1)
-            with open('lib/classifier/dumped_dtree.pkl', 'rb') as fid:
-                clf=cPickle.load(fid)
-            output_prediction=clf.predict([predictors])
+            output_prediction=classify_value(config,average_runtime,test_name,osp_version)
             if str(output_prediction[0])=="1":
                 print("ALERT!!!!")
-                print uuid,test_name,predictors[2]
+                print (uuid,test_name,predictors[2])
                 exit(1)
 
             #print("EEEEEEEEEEENNNNNNNNNNDDDDDD")
