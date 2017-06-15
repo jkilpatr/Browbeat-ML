@@ -100,8 +100,8 @@ class browbeat_test(object):
             self.dlrn_hash = raw_elastic['_source']['version']['dlrn_hash']
             self.scenario_name = raw_elastic['_source']['rally_setup']['name']
             self.timestamp=raw_elastic['_source']['timestamp']
-            self.no_computes=raw_elastic['_source']['environment-metadata']['environment_setup']['osp_computes_number']
-            self.no_controller=raw_elastic['_source']['environment-metadata']['environment_setup']['osp_controllers_number']
+            self.num_computes=raw_elastic['_source']['environment-metadata']['environment_setup']['osp_computes_number']
+            self.num_controller=raw_elastic['_source']['environment-metadata']['environment_setup']['osp_controllers_number']
             self.errortype=raw_elastic['_type']
 
             
