@@ -67,10 +67,10 @@ def print_run_details(config, es_backend, uuid):
                 return False
             data.extend(test_run.raw)
             osp_version = test_run.version
-
-        average_runtime=data_summary(data)[0]
+        statistics_uuid=data_summary(data)
+        average_runtime=statistics_uuid[0]
         output_string += test_name.ljust(padding) + \
-            " " + str(average_runtime)  #typecasting data_summary(data) to string because if it returns false it's going to throw an error
+            " " + str(average_runtime) +" "+ str(statistics_uuid[1])  #typecasting data_summary(data) to string because if it returns false it's going to throw an error
         if float(average_runtime)>0.0 and test_run.errortype=="result" and test_name!="nova.boot_server":
             if str(test_name) in config['test_with_scenario_list']:
                 test_name=str(test_run.scenario_name)+"."+str(test_name)
