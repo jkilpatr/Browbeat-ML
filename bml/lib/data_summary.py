@@ -87,8 +87,8 @@ def print_run_details(config, es_backend, uuid):
             if test_run.cloud_name in config['clouds']:
                 c.execute('INSERT INTO avg_values2 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',\
                           (str(uuid),str(test_run.timestamp),str(osp_version),str(test_run.cloud_name),\
-                           str(test_run.os_name),str(test_run.kernel),test_run.no_computes,\
-                           test_run.no_controller,test_run.controller['cores'],test_run.controller['mem'],\
+                           str(test_run.os_name),str(test_run.kernel),test_run.num_computes,\
+                           test_run.num_controller,test_run.controller['cores'],test_run.controller['mem'],\
                            test_run.undercloud['cores'],test_run.undercloud['mem'],\
                            str(test_run.dlrn_hash),str(test_name),str(test_run.scenario_name),\
                            average_runtime))
