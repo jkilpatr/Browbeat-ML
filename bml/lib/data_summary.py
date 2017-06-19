@@ -60,9 +60,6 @@ def print_run_details(config, es_backend, uuid):
         test_name = test_type['test']
         data = []
         for test_run in brun.get_tests(test_search=test_name):
-            if 'pipeline' in test_run.dlrn_hash or \
-               'trunk' in test_run.dlrn_hash:
-                return False
             data.extend(test_run.raw)
             osp_version = test_run.version
         statistics_uuid=data_summary(data)
