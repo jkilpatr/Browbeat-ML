@@ -1,5 +1,5 @@
-from lib.browbeat_run import browbeat_run
-from lib.dtree_classifier import classify_value
+from browbeat_run import browbeat_run
+from dtree_classifier import classify_value
 import numpy
 import sqlite3
 import cPickle

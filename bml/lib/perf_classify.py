@@ -1,7 +1,7 @@
 import tensorflow as tf
-#from lib.browbeat_run import browbeat_run
+from browbeat_run import browbeat_run
 import functools
-import lib.util
+import util
 import logging
 # from tensorflow.contrib.hooks import ProfilerHook
 
