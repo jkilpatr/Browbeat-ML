@@ -2,7 +2,7 @@ import yaml
 import logging
 import numpy
 import random
-from lib.browbeat_run import browbeat_run
+from browbeat_run import browbeat_run
 
 
 def is_power_of_two(num):
