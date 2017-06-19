@@ -2,6 +2,7 @@ import numpy
 import cPickle
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
+import subprocess
 
 def classify_value(config,value,test_name,osp_version):
     predictors=numpy.array([0,1,2])
@@ -11,7 +12,8 @@ def classify_value(config,value,test_name,osp_version):
     predictors[1]=test_name_dic[str(test_name)]
     predictors[2]=float(value)
     predictors.reshape(1, -1)
-    with open('lib/classifier/dumped_dtree.pkl', 'rb') as fid:
+    print subprocess.call(["pwd"])
+    with open('bml/lib/dumped_dtree.pkl', 'rb') as fid:
         clf=cPickle.load(fid)
     output_prediction=clf.predict([predictors])
     return output_prediction

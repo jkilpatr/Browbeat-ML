@@ -77,7 +77,7 @@ def print_run_details(config, es_backend, uuid):
             output_prediction=classify_value(config,average_runtime,test_name,osp_version)
             if str(output_prediction[0])=="1":
                 print("ALERT!!!!")
-                print (uuid,test_name,predictors[2])
+                print (uuid,test_name,osp_version)
                 exit(1)
 
             #print("EEEEEEEEEEENNNNNNNNNNDDDDDD")
