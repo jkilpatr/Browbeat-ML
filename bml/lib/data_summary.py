@@ -63,15 +63,13 @@ def print_run_details(config, es_backend, uuid):
             if 'pipeline' in test_run.dlrn_hash or \
                'trunk' in test_run.dlrn_hash:
                 return False
-            if len(str(test_run.dlrn_hash))<=45:
-                return False
             data.extend(test_run.raw)
             osp_version = test_run.version
         statistics_uuid=data_summary(data)
         average_runtime=statistics_uuid[0]
         output_string += test_name.ljust(padding) + \
             " " + str(average_runtime) +" "+ str(statistics_uuid[1])  #typecasting data_summary(data) to string because if it returns false it's going to throw an error
-        if float(average_runtime)>0.0 and test_run.errortype=="result" and test_name!="nova.boot_server":
+        if float(average_runtime)>0.0 and test_run.errortype=="result" and test_name!="nova.boot_server" and test_run.cloud_name in config['clouds']:
             if str(test_name) in config['test_with_scenario_list']:
                 test_name=str(test_run.scenario_name)+"."+str(test_name)
             output_prediction=classify_value(config,average_runtime,test_name,osp_version)
