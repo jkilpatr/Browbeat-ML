@@ -84,7 +84,8 @@ class browbeat_run(object):
                                      self.uuid,
                                      test,
                                      workload,
-                                     training_output=self._pass_fail)
+                                     training_output=self._pass_fail,
+                                     caching=self._caching)
             except ValueError:
                 print("ValueError in test processing " +
                       str(test) + " For UUID: " + self.uuid)
