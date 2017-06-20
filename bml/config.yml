@@ -175,4 +175,48 @@ watched_versions:
 clouds:
   - "microbrow-ha-2-compute-2"
   - "microbrow-ha-2-compute-1"
-  - "microbrow-ha-2-compute-0"
+  - "microbrow-HA-2-compute-2"
+  - "microbrow-HA-2-compute-1"
+
+osp_version_dic:
+  - 10-director: 1
+  - 10-tripleo: 2
+  - 11-director: 3
+  - 11-tripleo: 4
+  - 12-director: 5
+  - master-tripleo: 6
+  - 9-director: 7
+  - 9-tripleo: 8
+
+test_name_dic:
+  - "authenticate.keystone": 1
+  - "glance.create_image": 2
+  - "glance.delete_image": 3
+  - "keystone_v2.create_tenant": 4
+  - "neutron.add_interface_router": 5
+  - "BrowbeatPlugin.create_network_nova_boot.neutron.create_network": 61
+  - "NeutronNetworks.create_and_list_routers.neutron.create_network": 62
+  - "NeutronNetworks.create_and_list_subnets.neutron.create_network": 63
+  - "NeutronNetworks.create_and_list_ports.neutron.create_network": 64
+  - "NeutronNetworks.create_and_list_networks.neutron.create_network": 65
+  - "neutron.create_port": 7
+  - "neutron.create_router": 8
+  - "neutron.create_security_group": 9
+  - "NeutronNetworks.create_and_list_subnets.neutron.create_subnet": 101
+  - "NeutronNetworks.create_and_list_routers.neutron.create_subnet": 102
+  - "BrowbeatPlugin.create_network_nova_boot.neutron.create_subnet": 103
+  - "neutron.list_networks": 11
+  - "neutron.list_ports": 12
+  - "neutron.list_routers": 13
+  - "neutron.list_security_groups": 14
+  - "neutron.list_subnets": 15
+  - "nova.boot_server": 16
+  - "nova.create_image": 17
+  - "nova.delete_image": 18
+  - "nova.delete_server": 19
+  - "nova.list_servers": 20
+
+test_with_scenario_list:
+  - "neutron.create_network"
+  - "neutron.create_subnet"
+

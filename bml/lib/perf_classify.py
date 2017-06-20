@@ -1,7 +1,7 @@
 import tensorflow as tf
-from lib.browbeat_run import browbeat_run
+from browbeat_run import browbeat_run
 import functools
-import lib.util
+import util
 import logging
 # from tensorflow.contrib.hooks import ProfilerHook
 
@@ -48,7 +48,7 @@ def tf_train_uuid(conn, tset, tests):
                                         workload_search=benchmark['workload'])
             for test_run in test_list:
                 # Times agreement within a test
-                rc.append(lib.util.scale_values(test_run.raw, 512))
+                rc.append(util.scale_values(test_run.raw, 512))
                 cc.append(test_run.concurrency)
                 ruc.append(test_run.run)
                 if osp_version is None:
@@ -92,8 +92,7 @@ def tf_train_uuid(conn, tset, tests):
 def perf_classify(config, es_backend, uuid=None):
     # Take 30% of the data for validation and 70% for training at random
     training_data, validation_data = \
-        lib.util.split_data(config['classify-data'],
-                            .3)
+        util.split_data(config['classify-data'], .3)
     if len(validation_data) > len(training_data):
         print("You probably didn't intend to do this")
         exit(1)

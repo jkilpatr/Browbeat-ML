@@ -1,4 +1,4 @@
-from lib.browbeat_test import browbeat_test
+from browbeat_test import browbeat_test
 
 
 class browbeat_run(object):

@@ -27,6 +27,8 @@ class browbeat_test(object):
         self.nodes = len(hardware_details)
         self.os_name = hardware_details[0]['os_name']
         self.os_name = self._typecheck_string(self.os_name)
+        self.kernel = hardware_details[0]['kernel']
+        self.kernel = self._typecheck_string(self.kernel)
         self.controller = {}
         self.compute = {}
         self.undercloud = {}
@@ -97,3 +99,7 @@ class browbeat_test(object):
             self.run = self._typecheck_num(self.run)
             self.dlrn_hash = raw_elastic['_source']['version']['dlrn_hash']
             self.scenario_name = raw_elastic['_source']['rally_setup']['name']
+            self.timestamp = raw_elastic['_source']['timestamp']
+            self.num_computes = raw_elastic['_source']['environment-metadata']['environment_setup']['osp_computes_number']  # noqa
+            self.num_controller = raw_elastic['_source']['environment-metadata']['environment_setup']['osp_controllers_number']  # noqa
+            self.errortype = raw_elastic['_type']
