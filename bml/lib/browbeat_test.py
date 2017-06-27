@@ -20,7 +20,6 @@ class browbeat_test(object):
         self._training_output = training_output
         self._caching = caching
         self._metrics_cache = None
-        self._timeseries_metadata_present = False
 
     def _get_raw_data(self, raw_elastic):
         if 'raw' in raw_elastic['_source']:
@@ -117,6 +116,8 @@ class browbeat_test(object):
             else:
                 return self._get_timeseries_metadata_generator(filterlist)
         else:
+            print self._timeseries_metadata_present
+            print("No timeseries metadata for this test")
             return []
 
     def _get_timeseries_metadata_list(self, filterlist):
@@ -127,13 +128,16 @@ class browbeat_test(object):
             for entry in self._list_metrics_filtered(self._metrics_root,
                                                      filterlist):
                 data = self._get_raw_metrics(entry)
-                self._metrics_cache.append(data)
+                if data is not None:
+                    self._metrics_cache.append(data)
             return self._metrics_cache
 
     def _get_timeseries_metadata_generator(self, filterlist):
         for entry in self._list_metrics_filtered(self._metrics_root,
                                                  filterlist):
-            yield self._get_raw_metrics(entry)
+            data = self._get_raw_metrics(entry)
+            if data is not None:
+                yield data
 
     def _is_filter_match(self, string, filterlist):
         for item in filterlist:
@@ -173,12 +177,16 @@ class browbeat_test(object):
         return compressed
 
     def _get_raw_metrics(self, metric_id):
-        base_url = "{}/render?target={}&format=json&from={}&to={}"
+        base_url = "{}/render?target={}&format=json&from={}&until={}"
         data_url = base_url.format(self._graphite_url,
                                    metric_id,
                                    self._metrics_start,
                                    self._metrics_end)
-        response = requests.get(data_url).json()[0]
+        response = requests.get(data_url).json()
+        if len(response) > 0:
+            response = response[0]
+        else:
+            return None
         compressed = self._compress_timeseries(response['datapoints'])
         response['datapoints'] = compressed
         return response
