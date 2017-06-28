@@ -10,7 +10,7 @@ def classify_value(config, value, test_name, osp_version):
     predictors[1] = test_name_dic[str(test_name)]
     predictors[2] = float(value)
     predictors.reshape(1, -1)
-    with open('classifier/dumped_dtree.pkl', 'rb') as fid:
+    with open('dumped_dtree.pkl', 'rb') as fid:
         clf = cPickle.load(fid)
     output_prediction = clf.predict([predictors])
     return output_prediction
