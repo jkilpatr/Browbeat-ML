@@ -1,6 +1,6 @@
 import numpy
 import cPickle
-import os
+import subprocess
 
 def classify_value(config, value, test_name, osp_version):
     predictors = numpy.array([0, 1, 2])
