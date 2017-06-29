@@ -1,6 +1,8 @@
 import numpy
 import cPickle
 import subprocess
+import pkg_resources
+
 
 def classify_value(config, value, test_name, osp_version):
     predictors = numpy.array([0, 1, 2])
@@ -10,8 +12,7 @@ def classify_value(config, value, test_name, osp_version):
     predictors[1] = test_name_dic[str(test_name)]
     predictors[2] = float(value)
     predictors.reshape(1, -1)
-    subprocess.call(["pwd"])
-    with open('src/bml/bml/lib/classifier/dumped_dtree.pkl', 'rb') as fid:
-        clf = cPickle.load(fid)
+    with open(pkg_resources.resource_filename('bml',"lib/classifier/dumped_dtree.pkl"), 'rb') as cfid:
+        clf = cPickle.load(cfid)
     output_prediction = clf.predict([predictors])
     return output_prediction

@@ -3,6 +3,7 @@ from dtree_classifier import classify_value
 import numpy
 
 
+
 def longest_test_name(config):
     val = 0
     for test in config['tests']:
@@ -68,7 +69,7 @@ def print_run_details(config, es_backend, uuid):
             output_prediction = classify_value(config, average_runtime, test_name, osp_version)  # noqa
             if str(output_prediction[0]) == "1":
                 print("ALERT!!!!")
-                print(uuid, test_name, osp_version)
+                print(uuid, test_name, osp_version,average_runtime)
                 exit(1)
             output_string = output_string + str(output_prediction) + "\n"
         else:
