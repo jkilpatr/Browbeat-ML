@@ -84,3 +84,15 @@ objects. Please see `bml/lib/browbeat_test.py` for the full ever expanding list.
 	   print(test.name)
 	   print(test.raw)
 
+### Classifier
+
+The classifier has been trained using the data extracted for runs on in house clouds.
+It won't give perfect results out-of-box, you'll need to retrain it using data.
+
+Note: It uses just 4 features: test name, osp_version, average_runtime and grade. 
+
+Default grading scale used in the classifier was 1-5, with 1 meaning bad, with 3 
+meaning it is in expected range. 
+
+We've used a decision tree classifier rn, but plan on switching to SVM once we've
+enough data
