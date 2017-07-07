@@ -217,8 +217,8 @@ test_name_dic:
   - "nova.list_servers": 20
 
 test_with_scenario_list:
- -  - "neutron.create_network"
- -  - "neutron.create_subnet"
+  - "neutron.create_network"
+  - "neutron.create_subnet"
 
 database:
   - 'ml_values'
