@@ -216,6 +216,10 @@ test_name_dic:
   - "nova.delete_server": 19
   - "nova.list_servers": 20
 
+-test_with_scenario_list:
+ -  - "neutron.create_network"
+ -  - "neutron.create_subnet"
+
 database:
   - 'ml_values'
 
