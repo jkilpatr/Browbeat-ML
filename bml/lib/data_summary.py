@@ -1,7 +1,18 @@
 from browbeat_run import browbeat_run
 from dtree_classifier import classify_value
 import numpy
+import psycopg2
 
+
+def insert_values_db(config, uuid, test, osp_name, avg_runtime, grade):
+    db_name = config['database']
+    user_name = config['user_name']
+    host_ip = config['host']
+    conn = psycopg2.connect(database=db_name, user=user_name, host=host_ip, port=26257)  # noqa
+    conn.set_session(autocommit=True)
+    cur = conn.cursor()
+    cur.execute("CREATE TABLE IF NOT EXISTS grades (uuid STRING, test STRING, osp_name STRING, avg_runtime FLOAT, grade INT)")  # noqa
+    cur.execute("INSERT INTO grades (uuid, test, osp_name, avg_runtime, grade) VALUES (%s, %s, %s, %s, %s)" , (str(uuid), str(test), str(osp_name), float(avg_runtime), int(grade)))  # noqa
 
 
 def longest_test_name(config):
@@ -67,9 +78,10 @@ def print_run_details(config, es_backend, uuid):
             if str(test_name) in config['test_with_scenario_list']:
                 test_name = str(test_run.scenario_name) + "." + str(test_name)
             output_prediction = classify_value(config, average_runtime, test_name, osp_version)  # noqa
+            insert_values_db(uuid, test_name, osp_version, average_runtime, output_prediction)  # noqa
             if str(output_prediction[0]) == "1":
                 print("ALERT!!!!")
-                print(uuid, test_name, osp_version,average_runtime)
+                print(uuid, test_name, osp_version, average_runtime)
                 exit(1)
             output_string = output_string + str(output_prediction) + "\n"
         else:
