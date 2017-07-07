@@ -78,7 +78,7 @@ def print_run_details(config, es_backend, uuid):
             if str(test_name) in config['test_with_scenario_list']:
                 test_name = str(test_run.scenario_name) + "." + str(test_name)
             output_prediction = classify_value(config, average_runtime, test_name, osp_version)  # noqa
-            insert_values_db(uuid, test_name, osp_version, average_runtime, output_prediction)  # noqa
+            insert_values_db(config, uuid, test_name, osp_version, average_runtime, output_prediction)  # noqa
             if str(output_prediction[0]) == "1":
                 print("ALERT!!!!")
                 print(uuid, test_name, osp_version, average_runtime)
