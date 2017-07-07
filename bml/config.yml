@@ -227,6 +227,6 @@ user_name:
   - 'pythonclient'
 
 host:
-  - 10.12.68.20
+  - cr-cluster.scalelab.redhat.com
 
 
