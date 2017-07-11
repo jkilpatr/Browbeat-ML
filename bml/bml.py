@@ -43,7 +43,6 @@ def parse_args():
                                                                 "config.yml"),
                         help='-c <config file path> use custom config file')
 
-
     args = parser.parse_args()
     return args
 
@@ -57,9 +56,10 @@ def main():
         lib.data_summary.time_summary(config,
                                       es_backend,
                                       str(args.days) + "d",
-                                      args.version,update=False)
+                                      args.version, update=False)
     elif args.summary_uuid is not None:
-        lib.data_summary.summary_uuid(es_backend, config, args.summary_uuid, args.update)
+        lib.data_summary.summary_uuid(es_backend, config, args.summary_uuid,
+                                      args.update)
     else:
         args.error("No arguments defined!")
 

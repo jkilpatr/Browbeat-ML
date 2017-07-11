@@ -4,7 +4,7 @@ import numpy
 from update_crdb import insert_values_db
 
 
-def check_hash(hash_value,puddle):
+def check_hash(hash_value, puddle):
     if 'trunk' or 'pipeline' in hash_value:
         if 'pipeline' not in puddle:
             return True
@@ -75,12 +75,12 @@ def print_run_details(config, es_backend, uuid, update):
         result_check = test_run.errortype == "result"
         nova_check = test_name != "nova.boot_server"
         cloud_check = test_run.cloud_name in config['clouds']
-        hash_check = check_hash(test_run.dlrn_hash,test_run.rhos_puddle)
+        hash_check = check_hash(test_run.dlrn_hash, test_run.rhos_puddle)
         if time_check and result_check and nova_check and cloud_check and hash_check:  # noqa
             if str(test_name) in config['test_with_scenario_list']:
                 test_name = str(test_run.scenario_name) + "." + str(test_name)
             output_prediction = classify_value(config, average_runtime, test_name, osp_version)  # noqa
-            if update == True:
+            if update:
                 insert_values_db(config, uuid, test_name, osp_version, average_runtime, output_prediction)  # noqa
             if str(output_prediction[0]) == "1":
                 print("ALERT!!!!")
