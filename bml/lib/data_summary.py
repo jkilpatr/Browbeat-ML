@@ -5,7 +5,7 @@ from update_crdb import insert_values_db
 
 
 def check_hash(hash_value, puddle):
-    if 'trunk' or 'pipeline' in hash_value:
+    if ("pipeline" in hash_value) or ("trunk" in hash_value):
         if 'pipeline' not in puddle:
             return True
         else:
@@ -81,12 +81,11 @@ def print_run_details(config, es_backend, uuid, update):
                 test_name = str(test_run.scenario_name) + "." + str(test_name)
             output_prediction = classify_value(config, average_runtime, test_name, osp_version)  # noqa
             if update:
-                insert_values_db(config, uuid, test_name, osp_version, average_runtime, output_prediction)  # noqa
+                insert_values_db(config, uuid, test_name, osp_version, average_runtime, output_prediction, test_run.timestamp)  # noqa
             if str(output_prediction[0]) == "1":
                 print("ALERT!!!!")
                 print(uuid, test_name, osp_version, average_runtime)
                 output_prediction == "Fail"
-
             output_string = output_string + str(output_prediction) + "\n"
         else:
             output_string += "\n"
