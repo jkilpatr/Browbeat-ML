@@ -39,7 +39,7 @@ def summary_uuid(es_backend, config, uuid, update):
     val = print_run_details(config, es_backend, uuid, update)
     if val is not False:
         print(val)
-        if "Fail" in val:
+        if "FAIL" in str(val):
             exit(1)
 
 
@@ -82,11 +82,12 @@ def print_run_details(config, es_backend, uuid, update):
             output_prediction = classify_value(config, average_runtime, test_name, osp_version)  # noqa
             if update:
                 insert_values_db(config, uuid, test_name, osp_version, average_runtime, output_prediction, test_run.timestamp)  # noqa
-            if str(output_prediction) == "1":
+            if int(output_prediction) == 1:
                 print("ALERT!!!!")
                 print(uuid, test_name, osp_version, average_runtime)
-                output_prediction == "Fail"
-            output_string = output_string + str(output_prediction) + "\n"
+                output_string = output_string + "FAIL" + "\n"
+            else:
+                output_string = output_string + str(output_prediction) + "\n"
         else:
             output_string += "\n"
     '''
