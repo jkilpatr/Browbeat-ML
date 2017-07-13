@@ -82,7 +82,7 @@ def print_run_details(config, es_backend, uuid, update):
             output_prediction = classify_value(config, average_runtime, test_name, osp_version)  # noqa
             if update:
                 insert_values_db(config, uuid, test_name, osp_version, average_runtime, output_prediction, test_run.timestamp)  # noqa
-            if str(output_prediction[0]) == "1":
+            if str(output_prediction) == "1":
                 print("ALERT!!!!")
                 print(uuid, test_name, osp_version, average_runtime)
                 output_prediction == "Fail"
