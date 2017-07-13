@@ -74,9 +74,11 @@ def print_run_details(config, es_backend, uuid, update):
         time_check = float(average_runtime) > 0.0
         result_check = test_run.errortype == "result"
         nova_check = test_name != "nova.boot_server"
+        glance_check = test_name != "glance.create_image"
+        test_checks = nova_check and glance_check
         cloud_check = test_run.cloud_name in config['clouds']
         hash_check = check_hash(test_run.dlrn_hash, test_run.rhos_puddle)
-        if time_check and result_check and nova_check and cloud_check and hash_check:  # noqa
+        if time_check and result_check and test_checks and cloud_check and hash_check:  # noqa
             if str(test_name) in config['test_with_scenario_list']:
                 test_name = str(test_run.scenario_name) + "." + str(test_name)
             output_prediction = classify_value(config, average_runtime, test_name, osp_version)  # noqa
