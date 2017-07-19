@@ -2,7 +2,7 @@ from browbeat_run import browbeat_run
 from perf_classifier import classify_value
 import numpy
 from update_crdb import insert_values_db
-
+from update_crdb import insert_grades_db
 
 def check_hash(hash_value, puddle):
     if ("pipeline" in hash_value) or ("trunk" in hash_value):
@@ -71,25 +71,34 @@ def print_run_details(config, es_backend, uuid, update):
         average_runtime = statistics_uuid[0]
         output_string += test_name.ljust(padding) + \
             " " + str(average_runtime) + " " + str(statistics_uuid[1])
+        if str(test_name) in config['test_with_scenario_list']:
+            test_name = str(test_run.scenario_name) + "." + str(test_name)
+        times = test_run.times
+        concurrency = test_run.concurrency
         time_check = float(average_runtime) > 0.0
         result_check = test_run.errortype == "result"
         nova_check = test_name != "nova.boot_server"
-        glance_check = test_name != "glance.create_image"
+        glance_check = "glance" not in test_name
         test_checks = nova_check and glance_check
         cloud_check = test_run.cloud_name in config['clouds']
-        hash_check = check_hash(test_run.dlrn_hash, test_run.rhos_puddle)
-        if time_check and result_check and test_checks and cloud_check and hash_check:  # noqa
-            if str(test_name) in config['test_with_scenario_list']:
-                test_name = str(test_run.scenario_name) + "." + str(test_name)
-            output_prediction = classify_value(config, average_runtime, test_name, osp_version)  # noqa
-            if update:
-                insert_values_db(config, uuid, test_name, osp_version, average_runtime, output_prediction, test_run.timestamp)  # noqa
-            if int(output_prediction) == 1:
-                print("ALERT!!!!")
-                print(uuid, test_name, osp_version, average_runtime)
-                output_string = output_string + "FAIL" + "\n"
+        dlrn_hash = test_run.dlrn_hash
+        puddle = test_run.rhos_puddle
+        hash_check = check_hash(dlrn_hash, puddle)
+        if time_check and result_check and cloud_check and hash_check:  # noqa
+            if test_checks:
+                output_prediction = classify_value(config, average_runtime, test_name, osp_version, times, concurrency)  # noqa
+                if update:
+                    insert_grades_db(config, uuid, test_name, osp_version, average_runtime, output_prediction, test_run.timestamp, puddle, dlrn_hash, concurrency, times)  # noqa
+                if int(output_prediction) == 1:
+                    print("ALERT!!!!")
+                    print(uuid, test_name, osp_version, average_runtime)
+                    output_string = output_string + "FAIL" + "\n"
+                else:
+                    output_string = output_string + str(output_prediction) + "\n"
             else:
-                output_string = output_string + str(output_prediction) + "\n"
+                if update:
+                    insert_values_db(config, uuid, test_name, osp_version, average_runtime, test_run.timestamp, puddle, dlrn_hash, concurrency, times)
+                    output_string += "\n"
         else:
             output_string += "\n"
     '''

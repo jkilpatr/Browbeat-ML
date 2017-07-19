@@ -220,6 +220,9 @@ test_with_scenario_list:
   - "neutron.create_network"
   - "neutron.create_subnet"
 
+table:
+  - 'prod_data'
+
 database:
   - 'ml_values'
 
