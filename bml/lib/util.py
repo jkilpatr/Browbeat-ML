@@ -3,6 +3,7 @@ import logging
 import numpy
 import random
 from browbeat_run import browbeat_run
+import psycopg2
 
 
 def is_power_of_two(num):
@@ -55,3 +56,12 @@ def load_config(path):
     config = yaml.load(stream)
     stream.close()
     return config
+
+
+def connect_crdb(config):
+    db_name = config['database'][0]
+    user_name = config['user_name'][0]
+    host_ip = config['host'][0]
+    conn = psycopg2.connect(database=db_name, user=user_name,
+                            host=str(host_ip), port=26257)
+    return conn

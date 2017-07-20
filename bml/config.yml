@@ -178,6 +178,11 @@ clouds:
   - "microbrow-HA-2-compute-2"
   - "microbrow-HA-2-compute-1"
 
+ignored_tests:
+  - "nova.boot_server"
+  - "glance.create_image"
+  - "glance.delete_image"
+
 osp_version_dic:
   - 10-director: 1
   - 10-tripleo: 2
@@ -220,7 +225,7 @@ test_with_scenario_list:
   - "neutron.create_network"
   - "neutron.create_subnet"
 
-table:
+table_name:
   - 'prod_data'
 
 database:
