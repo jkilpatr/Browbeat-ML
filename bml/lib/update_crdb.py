@@ -1,9 +1,9 @@
-from lib.util import connect_crdb
+import util
 
 
 def insert_grades_db(config, uuid, test, osp_name, avg_runtime, grade,
                      time_stamp, puddle, dlrn, concurrency, times):
-    conn = connect_crdb(config)
+    conn = util.connect_crdb(config)
     conn.set_session(autocommit=True)
     cur = conn.cursor()
     classify = True
@@ -22,7 +22,7 @@ def insert_grades_db(config, uuid, test, osp_name, avg_runtime, grade,
 
 def insert_values_db(config, uuid, test, osp_name, avg_runtime,
                      time_stamp, puddle, dlrn, concurrency, times):
-    conn = connect_crdb(config)
+    conn = util.connect_crdb(config)
     conn.set_session(autocommit=True)
     cur = conn.cursor()
     classify = False
