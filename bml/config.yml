@@ -1,120 +1,5 @@
 elastic-host: elk.browbeatproject.org
 elastic-port: 9200
-classify-data:
-  - uuid: acde6660-bbe6-4b4c-a8d8-327543130073
-    category: "pass"
-    set: "perf-ci"
-  - uuid: f21d7ecf-e7ce-4818-adc7-44e297b95fc6
-    category: "fail"
-    set: "perf-ci"
-  - uuid: dd52dc23-aa36-40a7-98aa-eb1887f94217
-    category: "fail"
-    set: "perf-ci"
-  - uuid: 0af5d0ec-2e25-4736-a5bc-01ae3835fa3a
-    category: "pass"
-    set: "perf-ci"
-  - uuid: 0fa7f533-8ac5-483b-bf15-1f1abc0937bd
-    category: "pass"
-    set: "perf-ci"
-  - uuid: 8647e0da-62c2-4bee-a016-93cba5427595
-    category: "pass"
-    set: "perf-ci"
-  - uuid: 9954944f-1ae7-4567-b7b8-69de45f96cdc
-    category: "fail"
-    set: "perf-ci"
-  - uuid: f264b610-1a63-4b88-910a-87dbc39b479f
-    category: "fail"
-    set: "perf-ci"
-  - uuid: 182cbee0-14f4-436a-9e18-4656893926b5
-    category: "fail"
-    set: "perf-ci"
-  - uuid: 6c085c8f-e12c-419a-aacf-4c1614ea6744
-    category: "pass"
-    set: "perf-ci"
-  - uuid: 3cef6d86-2dba-4c35-b9a0-6c1c8938557e
-    category: "pass"
-    set: "perf-ci"
-  - uuid: 21333858-bec3-4928-afd9-a5006ff1eee2
-    category: "pass"
-    set: "perf-ci"
-  - uuid: 8242e662-258c-4411-adb6-b9ee3f998521
-    category: "pass"
-    set: "perf-ci"
-  - uuid: 0da8249c-afa8-4d72-bc62-857630ffdd1c
-    category: "fail"
-    set: "perf-ci"
-  - uuid: 9adbd05b-e643-473d-a9aa-d40587ae9c7c
-    category: "pass"
-    set: "perf-ci"
-  - uuid: 39f029ee-5338-4676-baeb-355b5879521a
-    category: "fail"
-    set: "perf-ci"
-  - uuid: 34ab39be-84b5-43ae-a0da-30494c943fc0
-    category: "pass"
-    set: "perf-ci"
-  - uuid: 3f5d8cca-e418-482b-ae75-0159841d55a2
-    category: "pass"
-    set: "perf-ci"
-  - uuid: e5c8e1c5-a3b1-4c64-8795-5f30a0899e57
-    category: "fail"
-    set: "perf-ci"
-  - uuid: 4f86af62-34cb-4246-b3c8-8315983f1c92
-    category: "pass"
-    set: "perf-ci"
-  - uuid: c56c2c4a-9aac-4f4e-811b-6b43bccdfaed
-    category: "fail"
-    set: "perf-ci"
-  - uuid: df5606d1-4f7b-4e55-8082-59513d405cb2
-    category: "fail"
-    set: "perf-ci"
-  - uuid: 6fe4177b-5d88-4721-a22b-795ade15c833
-    category: "fail"
-    set: "perf-ci"
-  - uuid: 72d43917-da25-441b-abf6-f6d4a6096ccf
-    category: "fail"
-    set: "perf-ci"
-  - uuid: c2230dd6-0614-4aee-b444-6573e178a0a1
-    category: "fail"
-    set: "perf-ci"
-  - uuid: b91176b6-3a3f-4843-8535-eeb94a9c3b95
-    category: "fail"
-    set: "perf-ci"
-  - uuid: c513969a-30f7-406f-bf57-ba20199265fd
-    category: "pass"
-    set: "perf-ci"
-  - uuid: 3fc2f149-7091-4e16-855a-60738849af17
-    category: "pass"
-    set: "perf-ci"
-  - uuid: 6738eed7-c8dd-4747-abde-47c996975a57
-    category: "fail"
-    set: "perf-ci"
-  - uuid: ba1f0c67-a8e7-41bb-81d3-1804bc3ca6e9
-    category: "fail"
-    set: "perf-ci"
-  - uuid: 860126d8-8434-4867-952a-d7cb06288647
-    category: "fail"
-    set: "perf-ci"
-  - uuid: abf28a03-b573-477e-8ef5-f763926d8113
-    category: "fail"
-    set: "perf-ci"
-  - uuid: 784b9a7d-2a25-4d92-9d21-380a8cc8761a
-    category: "pass"
-    set: "perf-ci"
-  - uuid: 7eb04d86-904a-4e40-b638-f24b3ddcdcc9
-    category: "pass"
-    set: "perf-ci"
-  - uuid: 7eb04d86-904a-4e40-b638-f24b3ddcdcc9
-    category: "pass"
-    set: "perf-ci"
-  - uuid: 9adbd05b-e643-473d-a9aa-d40587ae9c7c
-    category: "pass"
-    set: "perf-ci"
-  - uuid: a2bdf706-fd27-4903-8a08-c9dcaab03a08
-    category: "pass"
-    set: "perf-ci"
-  - uuid: 08dc1fb6-6df7-4f4d-9578-d8e676068547
-    category: "pass"
-    set: "perf-ci"
 
 tests:
   - workload: "rally"
@@ -237,4 +122,19 @@ user_name:
 host:
   - cr-cluster.scalelab.redhat.com
 
+# Please keep in mind that this is
+# used to decide which pickle file to use
+# so if your file is named
+# svc.pkl then use svc
+# but if named dtree.pkl then use dtree and so on
+# We've provided svc, dtree and gnb(GaussianNB) by default
+# but you'll need to update the classifier using your own
+# database
+classifier:
+  - svc
+
+classifier_lists:
+  - svc
+  - dtree
+  - gnb
 

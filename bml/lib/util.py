@@ -98,3 +98,11 @@ def connect_crdb(config):
                             host=str(host_ip), port=26257)
     conn.set_session(autocommit=True)
     return conn
+
+
+# WIP make it loop through all the ignore_tests and it's not one of em
+def test_ignore_check(test, config):
+    for tests in config['ignored_tests']:
+        if tests in test:
+            return False
+    return True

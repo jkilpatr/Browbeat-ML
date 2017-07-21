@@ -5,6 +5,8 @@ import lib.data_summary
 import lib.util
 import pkg_resources
 import lib.crdb_summary
+import lib.update_classifiers
+import lib.test_classifiers
 
 
 class MyParser(argparse.ArgumentParser):
@@ -39,6 +41,19 @@ def parse_args():
                         default=False,
                         help='-u True pushes data to cockroach db')
 
+    parser.add_argument('--update-clf', dest="clf_days", type=int,
+                        default=-1,
+                        help='--update-clf 60 will update all classifiers \
+                        listed in config file under classifier_lists \
+                        using data from last 60 days')
+
+    parser.add_argument('--test-clf', dest="test_days", type=int,
+                        default=-1,
+                        help='--test-clf 60 will train all classifiers \
+                        listed in config file under classifier_lists \
+                        using data from last 60 days and then test it \
+                        and display metrics')
+
     parser.add_argument('-v', '--osp-version', dest='version', type=str,
                         default=None,
                         help='-v 11-tripleo only returns hits for that \
@@ -67,6 +82,10 @@ def main():
     elif args.summary_uuid is not None:
         lib.data_summary.summary_uuid(es_backend, config, args.summary_uuid,
                                       args.update)
+    elif args.clf_days is not -1:
+        lib.update_classifiers.update(config, args.clf_days)
+    elif args.test_days is not -1:
+        lib.test_classifiers.test(config, args.test_days)
     elif args.short_days is not -1:
         lib.crdb_summary.time_summary(config,
                                       int(args.short_days))

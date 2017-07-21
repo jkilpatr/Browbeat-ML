@@ -17,7 +17,8 @@ def classify_value(config, value, test_name, osp_version, concurrency, times):
     predictors[3] = int(concurrency)
     predictors[4] = int(times)
     predictors.reshape(1, -1)
-    clf_dir = "lib/classifier/dumped_svc.pkl"
+    clf_name = str(config['classifier'][0])
+    clf_dir = "lib/classifier/" + clf_name + ".pkl"
     with open(pkg_resources.resource_filename('bml', clf_dir), 'rb') as cfid:
         clf = cPickle.load(cfid)
     output_prediction = clf.predict([predictors])

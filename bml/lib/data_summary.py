@@ -58,9 +58,12 @@ def print_run_details(config, es_backend, uuid, update):
     for test_type in config['tests']:
         test_name = test_type['test']
         data = []
+        test_run = None
         for test_run in brun.get_tests(test_search=test_name):
             data.extend(test_run.raw)
             osp_version = test_run.version
+        if test_run is None:
+            continue
         statistics_uuid = data_summary(data)
         average_runtime = statistics_uuid[0]
         output_string += test_name.ljust(padding) + \
