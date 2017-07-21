@@ -17,12 +17,14 @@ def time_summary(config, days):
         output_string = ""
         for row in rows:
             output_string += row[0].ljust(padding) + " " +  \
-                "%06.2f" %float(row[2]) + "     " + str(row[3]) + "\n"
+                "%06.2f" % float(row[2]) + "     " + str(row[3]) + "\n"
             osp_version = row[1]
-        header = ("Browbeat UUID: " + uuid + " OSP_version: " + osp_version + "\n")
+        print_uuid = "Browbeat UUID: "
+        header \
+            = (print_uuid + uuid + " OSP_version: " + osp_version + "\n")
         header += ("".ljust(80, "-")) + "\n"
         output_string = header + output_string
-        print output_string
+        print(output_string)
 
 
 def get_uuids_list(config, days):

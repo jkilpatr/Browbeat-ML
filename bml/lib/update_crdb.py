@@ -9,15 +9,13 @@ def insert_grades_db(config, uuid, test, osp_name, avg_runtime, grade,
     classify = True
     cur.execute("INSERT INTO {} VALUES ('{}', '{}', '{}', {}, '{}', '{}', \
                 '{}', '{}', {}, {}, {});" .format(config['table_name'][0],
-                                                        str(uuid), str(test),
-                                                        str(osp_name),
-                                                        float(avg_runtime),
-                                                        str(time_stamp),
-                                                        str(puddle), str(dlrn),
-                                                        bool(classify),
-                                                        int(grade),
-                                                        int(concurrency),
-                                                        int(times)))
+                                                  str(uuid), str(test),
+                                                  str(osp_name),
+                                                  float(avg_runtime),
+                                                  str(time_stamp), str(puddle),
+                                                  str(dlrn), bool(classify),
+                                                  int(grade), int(concurrency),
+                                                  int(times)))
 
 
 def insert_values_db(config, uuid, test, osp_name, avg_runtime,
@@ -30,11 +28,8 @@ def insert_values_db(config, uuid, test, osp_name, avg_runtime,
                 timestamp, rhos_puddle, dlrn_hash, classify, concurrency, \
                 times) VALUES ('{}', '{}', '{}', {}, '{}', '{}', \
                 '{}', '{}', {}, {})" .format(config['table_name'][0],
-                                                       str(uuid), str(test),
-                                                       str(osp_name),
-                                                       float(avg_runtime),
-                                                       str(time_stamp),
-                                                       str(puddle), str(dlrn),
-                                                       bool(classify),
-                                                       int(concurrency),
-                                                       int(times)))
+                                             str(uuid), str(test),
+                                             str(osp_name), float(avg_runtime),
+                                             str(time_stamp), str(puddle),
+                                             str(dlrn), bool(classify),
+                                             int(concurrency), int(times)))

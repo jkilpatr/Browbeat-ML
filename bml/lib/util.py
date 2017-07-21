@@ -94,7 +94,7 @@ def connect_crdb(config):
     db_name = config['database'][0]
     user_name = config['user_name'][0]
     host_ip = config['host'][0]
-    conn = psycopg2.connect(database = db_name, user = user_name,
-                            host = str(host_ip), port = 26257)
+    conn = psycopg2.connect(database=db_name, user=user_name,
+                            host=str(host_ip), port=26257)
     conn.set_session(autocommit=True)
     return conn

@@ -5,7 +5,7 @@ import lib.data_summary
 import lib.util
 import pkg_resources
 import lib.crdb_summary
-import lib.crdb_summary
+
 
 class MyParser(argparse.ArgumentParser):
     """Custom parser class."""
@@ -29,10 +29,11 @@ def parse_args():
                         default=None,
                         help='--summary-uuid UUID summary of a specific uuid')
 
-    parser.add_argument('--short-summary', dest="short_days", type=int, default=-1,
+    parser.add_argument('--short-summary', dest="short_days", type=int,
+                        default=-1,
                         help='--short-summary N gives \
-                        summary of last N days of results but uses cockroach db \
-                        so only provides with basic summary')
+                        summary of last N days of results but uses cockroach \
+                        db so only provides with basic summary')
 
     parser.add_argument('-u', '--update-db', dest='update', type=bool,
                         default=False,
