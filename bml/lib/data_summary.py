@@ -3,6 +3,7 @@ from perf_classifier import classify_value
 import numpy
 from update_crdb import insert_values_db
 from update_crdb import insert_grades_db
+from util import longest_test_name
 
 
 def check_hash(hash_value, puddle):
@@ -13,14 +14,6 @@ def check_hash(hash_value, puddle):
             return False
     else:
         return True
-
-
-def longest_test_name(config):
-    val = 0
-    for test in config['tests']:
-        if len(test['test']) > val:
-            val = len(test['test'])
-    return val
 
 
 def time_summary(config, es_backend, time_period, osp_version, update):

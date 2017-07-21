@@ -1,4 +1,4 @@
-from lib.util import connect_crdb
+from util import connect_crdb
 
 
 def insert_grades_db(config, uuid, test, osp_name, avg_runtime, grade,

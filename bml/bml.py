@@ -4,7 +4,8 @@ import lib.elastic_backend
 import lib.data_summary
 import lib.util
 import pkg_resources
-
+import lib.crdb_summary
+import lib.crdb_summary
 
 class MyParser(argparse.ArgumentParser):
     """Custom parser class."""
@@ -27,6 +28,11 @@ def parse_args():
     parser.add_argument('--summary-uuid', dest="summary_uuid", type=str,
                         default=None,
                         help='--summary-uuid UUID summary of a specific uuid')
+
+    parser.add_argument('--short-summary', dest="short_days", type=int, default=-1,
+                        help='--short-summary N gives \
+                        summary of last N days of results but uses cockroach db \
+                        so only provides with basic summary')
 
     parser.add_argument('-u', '--update-db', dest='update', type=bool,
                         default=False,
@@ -60,6 +66,9 @@ def main():
     elif args.summary_uuid is not None:
         lib.data_summary.summary_uuid(es_backend, config, args.summary_uuid,
                                       args.update)
+    elif args.short_days is not -1:
+        lib.crdb_summary.time_summary(config,
+                                      int(args.short_days))
     else:
         args.error("No arguments defined!")
 
