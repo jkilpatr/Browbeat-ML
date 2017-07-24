@@ -8,7 +8,7 @@ are easy enough to integrate.
 
 To install run
 
-	pip install git+https://github.com/jkilpatr/Browbeat-ML
+	pip install git+https://github.com/aakarshg/Browbeat-ML
 
 I suggest using a venv as the requirements for this project are sizeable and you
 might not want them in your native python environment.
@@ -35,37 +35,11 @@ overview of data as it comes in.
 	bml -s <n>
 	bml --summary <n>
 
-The two existing machine learning models are perf classify and perf predict.
-Perf classify is an attempt at automatically flagging problem builds by training
-a combined Linear/DNN model to separate a provided Browbeat UUID into 'pass' and
-'needs attention' builds. Right now it's accuracy varies between 55% and 70%
-depending on how the randomized split of training data and evaluation data goes
-which means I don't have a good distribution of examples for training data.
+Storing import data needed to update the classifier, `-u True` helps you to upload
+needed features like avg_runtime, time_stamp, test name, osp-version and grade
+which are primarily used by the default classifier. It is set to False by default
 
-	bml --classify <browbeat UUID>
-
-This will train the model and classify a UUID, don't trust it right now. As I said
-before this model needs more training data before it's anywhere near ready.
-
-	bml --classify-test
-
-This is used to test model changes and evaluate the model, it trains and then
-evaluates the model.
-
-Perf predict is even more experimental than perf classify, it's an attempt
-at a model that feeds in lots of Browbeat metadata and test results and then
-attempts to predict the performance of a given rally action on arbitrary hardware
-for arbitrary concurrency, right now there's no wizard to guide you through
-actually using this model and only the testing code is written.
-
-	bml --predict_test
-
-Don't run the above if you don't have awhile, instead of relying on explicit
-training examples this model willl train itself on all available Browbeat data
-for that rally action in whatever ElasticSearch instance you point it at. This
-can take upwards of an hour to process all the data and train. Or many many hours
-if your not using a GPU.
-
+	bml -u <True/False>
 
 ### Using BML as a python library
 
@@ -89,10 +63,11 @@ objects. Please see `bml/lib/browbeat_test.py` for the full ever expanding list.
 The classifier has been trained using the data extracted for runs on in house clouds.
 It won't give perfect results out-of-box, you'll need to retrain it using data.
 
-Note: It uses just 4 features: test name, osp_version, average_runtime and grade. 
+Note: It uses just 4 features: test name, osp_version, average_runtime and grade.
 
-Default grading scale used in the classifier was 1-5, with 1 meaning bad, with 3 
-meaning it is in expected range. 
+Default grading scale used in the classifier was 1-5, with 1 meaning bad, with 3
+meaning it is in expected range.
 
 We've used a decision tree classifier rn, but plan on switching to SVM once we've
 enough data
+

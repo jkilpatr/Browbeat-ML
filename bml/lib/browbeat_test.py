@@ -101,10 +101,13 @@ class browbeat_test(object):
             self.run = raw_elastic['_source']['iteration']
             self.run = self._typecheck_num(self.run)
             self.dlrn_hash = raw_elastic['_source']['version']['dlrn_hash']
+            self.rhos_puddle = raw_elastic['_source']['version']['rhos_puddle']
             self.scenario_name = raw_elastic['_source']['rally_setup']['name']
             self.timestamp = raw_elastic['_source']['timestamp']
-            self.num_computes = raw_elastic['_source']['environment-metadata']['environment_setup']['osp_computes_number']  # noqa
-            self.num_controller = raw_elastic['_source']['environment-metadata']['environment_setup']['osp_controllers_number']  # noqa
+            self.num_computes = \
+                raw_elastic['_source']['environment-metadata']['environment_setup']['osp_computes_number']  # noqa
+            self.num_controller = \
+                raw_elastic['_source']['environment-metadata']['environment_setup']['osp_controllers_number']  # noqa
             self.errortype = raw_elastic['_type']
 
     # Returns the name/data tuple of anything that maches a pattern

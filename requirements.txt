@@ -7,3 +7,4 @@ argparse
 logger
 scipy
 scikit-learn
+psycopg2
