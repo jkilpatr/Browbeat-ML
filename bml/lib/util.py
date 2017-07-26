@@ -2,7 +2,7 @@ import yaml
 import logging
 import numpy
 import random
-from browbeat_run import browbeat_run
+import requests
 import psycopg2
 from datetime import date
 
@@ -13,6 +13,50 @@ def is_power_of_two(num):
         return False
     else:
         return True
+
+
+def list_metrics(graphite_url, metric):
+    metrics_list = []
+    for submetric in get_submetrics(metric, graphite_url):
+        if submetric['leaf'] == 1:
+            metrics_list.extend([submetric['id']])
+        else:
+            children = list_metrics(graphite_url,
+                                    submetric['id'])
+            metrics_list.extend(children)
+    return metrics_list
+
+
+# Helper function for navigating metric trees, returns children or None
+def get_submetrics(metric_id, graphite_url):
+    metrics_url = "{}/metrics/find?query={}.*".format(graphite_url,
+                                                      metric_id)
+    response = requests.get(metrics_url).json()
+    return response
+
+
+def compress_timeseries(uncompressed):
+    compressed = []
+    for point in uncompressed:
+        if point[0] is not None:
+            compressed.append(point)
+    return compressed
+
+
+def get_raw_metrics(metric_id, graphite_url, start, end):
+    base_url = "{}/render?target={}&format=json&from={}&until={}"
+    data_url = base_url.format(graphite_url,
+                               metric_id,
+                               start,
+                               end)
+    response = requests.get(data_url).json()
+    if len(response) > 0:
+        response = response[0]
+    else:
+        return None
+    compressed = compress_timeseries(response['datapoints'])
+    response['datapoints'] = compressed
+    return response
 
 
 # Takes a list, vals of arbitrary size scales it up or down to `size`
@@ -71,12 +115,6 @@ def date_valid(input_date, time_days):
     if difference.days <= time_days:
         return True
     return False
-
-
-# takes a list of uuids, returns list of run objects
-def uuids_to_runs(uuids, es_backend, caching=False):
-    for uuid in uuids:
-        yield browbeat_run(es_backend, uuid, caching=caching)
 
 
 def load_config(path):

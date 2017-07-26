@@ -1,4 +1,3 @@
-import requests
 
 
 class browbeat_test(object):
@@ -9,15 +8,12 @@ class browbeat_test(object):
                  raw_elastic,
                  uuid, test_name,
                  workload,
-                 training_output=None,
                  caching=None):
         self.uuid = uuid
         self.name = test_name
         self.workload = workload
         self._set_metadata(raw_elastic)
         self.raw = self._get_raw_data(raw_elastic)
-        # Using during model training, true false for now, to be expanded
-        self._training_output = training_output
         self._caching = caching
         self._metrics_cache = None
 
@@ -110,90 +106,6 @@ class browbeat_test(object):
                 raw_elastic['_source']['environment-metadata']['environment_setup']['osp_controllers_number']  # noqa
             self.errortype = raw_elastic['_type']
 
-    # Returns the name/data tuple of anything that maches a pattern
-    # if caching is on in the browbeat_run object cache the results
-    def get_timeseries_metadata(self, filterlist):
-        if self._timeseries_metadata_present:
-            if self._caching:
-                return self._get_timeseries_metadata_list(filterlist)
-            else:
-                return self._get_timeseries_metadata_generator(filterlist)
-        else:
-            print self._timeseries_metadata_present
-            print("No timeseries metadata for this test")
-            return []
-
-    def _get_timeseries_metadata_list(self, filterlist):
-        if self._metrics_cache is not None:
-            return self._metrics_cache
-        else:
-            self._metrics_cache = []
-            for entry in self._list_metrics_filtered(self._metrics_root,
-                                                     filterlist):
-                data = self._get_raw_metrics(entry)
-                if data is not None:
-                    self._metrics_cache.append(data)
-            return self._metrics_cache
-
-    def _get_timeseries_metadata_generator(self, filterlist):
-        for entry in self._list_metrics_filtered(self._metrics_root,
-                                                 filterlist):
-            data = self._get_raw_metrics(entry)
-            if data is not None:
-                yield data
-
-    def _is_filter_match(self, string, filterlist):
-        for item in filterlist:
-            if item in string:
-                return True
-        return False
-
-    def _list_metrics_filtered(self, metric, filterlist):
-        metrics_list = []
-        for submetric in self._get_submetrics(metric):
-            # cloud->machine->metric so we need to ignore the top two levels of
-            # delimiters which happen to be .'s here
-            if submetric['id'].count('.') >= 2 and \
-               not self._is_filter_match(submetric['id'],
-                                         filterlist):
-                continue
-            elif submetric['leaf'] is 0:
-                children = self._list_metrics_filtered(submetric['id'],
-                                                       filterlist)
-                metrics_list.extend(children)
-            else:
-                return [submetric['id']]
-        return metrics_list
-
-    # Helper function for navigating metric trees, returns children or None
-    def _get_submetrics(self, metric_id):
-        metrics_url = "{}/metrics/find?query={}.*".format(self._graphite_url,
-                                                          metric_id)
-        response = requests.get(metrics_url).json()
-        return response
-
-    def _compress_timeseries(self, uncompressed):
-        compressed = []
-        for point in uncompressed:
-            if point[0] is not None:
-                compressed.append(point)
-        return compressed
-
-    def _get_raw_metrics(self, metric_id):
-        base_url = "{}/render?target={}&format=json&from={}&until={}"
-        data_url = base_url.format(self._graphite_url,
-                                   metric_id,
-                                   self._metrics_start,
-                                   self._metrics_end)
-        response = requests.get(data_url).json()
-        if len(response) > 0:
-            response = response[0]
-        else:
-            return None
-        compressed = self._compress_timeseries(response['datapoints'])
-        response['datapoints'] = compressed
-        return response
-
     def _set_timeseries_metadata(self, raw_elastic):
         # This code maintains two assumptions
         # 1. the graphite and grafana machine is the same (mostly true)
@@ -211,7 +123,7 @@ class browbeat_test(object):
             start = start.split("&")[0].split('=')[1]
             end = grafana_url[dashboard].split("&")[1].split('=')[1]
             graphite_url = grafana_url[dashboard].split(":")[1].strip("/")
-            graphite_port = "8008"
+            graphite_port = "80"
             self._timeseries_metadata_present = True
             self._graphite_url = "http://{}:{}".format(graphite_url,
                                                        graphite_port)

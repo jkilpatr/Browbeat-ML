@@ -1,4 +1,6 @@
 from browbeat_test import browbeat_test
+from util import list_metrics
+from util import get_raw_metrics
 
 
 class browbeat_run(object):
@@ -7,15 +9,43 @@ class browbeat_run(object):
     # in this case raw_elastic is just a dump from elastic for the uuid
     # disable caching when you need to use less ram at the cost of thrasing
     # the elastic DB more
-    def __init__(self, elastic_connection, uuid, caching=True, pass_fail=None):
+    def __init__(self,
+                 elastic_connection,
+                 uuid,
+                 caching=True,
+                 pass_fail=None,
+                 timeseries=False):
         self._caching = caching
         self._elastic_connection = elastic_connection.grab_uuid(uuid)
         if self._caching:
             self._tests = None
         self.uuid = uuid
-        # Used for training, pass_fail at the run level right now, should be
-        # brought down to the test level later.
-        self._pass_fail = pass_fail
+        # If timeseries metadata is enabled we will go and grab all of it.
+        if timeseries:
+            self._init_timeseries()
+
+    def _init_timeseries(self):
+        # this timestamp should never be smaller than any time in
+        # the next few thousand years
+        start = 2000000000
+        end = 0
+        for test in self.get_tests():
+            start = min(start, test._metrics_start)
+            end = max(end, test._metrics_end)
+            url = test._graphite_url
+            root = test._metrics_root
+        metrics_list = list_metrics(url, root)
+        self._graphite_metrics_list = metrics_list
+        self._graphite_start = start
+        self._graphite_end = end
+        self._graphite_url = url
+
+    def get_timeseries(self):
+        for metric in self._graphite_metrics_list:
+            yield get_raw_metrics(metric,
+                                  self._graphite_url,
+                                  self._graphite_start,
+                                  self._graphite_end)
 
     def _map_scenario_to_test(self, source):
         if 'action' in source:
@@ -84,7 +114,6 @@ class browbeat_run(object):
                                      self.uuid,
                                      test,
                                      workload,
-                                     training_output=self._pass_fail,
                                      caching=self._caching)
             except ValueError:
                 print("ValueError in test processing " +
