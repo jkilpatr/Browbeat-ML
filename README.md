@@ -48,8 +48,19 @@ that instead of querying from elastic search, it uses cockroachdb.
 
 
 	bml --short-summary <n>
+	
+You can update the classifier using the cockroach db short summary by giving it `n`
+days as argument and it'll use data from the last `n` days to train and update
+all the classifiers listed in config.yaml and update the pickle files. 
 
+	bml --update-clf <n>
+	
+You can test the classifiers using the cockroach db short summary by giving it `n`
+days as argument and it'll use data from the last `n` days to train classifiers
+and display the metrics so that you've a better idea of what's happening. 
 
+	bml --test-clf <n>
+	
 
 ### Using BML as a python library
 
