@@ -35,11 +35,21 @@ overview of data as it comes in.
 	bml -s <n>
 	bml --summary <n>
 
-Storing import data needed to update the classifier, `-u True` helps you to upload
-needed features like avg_runtime, time_stamp, test name, osp-version and grade
-which are primarily used by the default classifier. It is set to False by default
+Storing import data needed to update the classifier, `--update-db True` helps you 
+to upload needed features like avg_runtime, time_stamp, test name, osp-version and
+grade which are primarily used by the default classifier. It is set to False by default
 
-	bml -u <True/False>
+	bml --update-db <True/False>
+
+In order to not thrash elastic search for getting simpler summary, we provide
+with short-summary which gets data from cockroachdb and displays the results.
+it takes the argument no. of days, just like summary. Only difference being 
+that instead of querying from elastic search, it uses cockroachdb. 
+
+
+	bml --short-summary <n>
+
+
 
 ### Using BML as a python library
 
@@ -68,6 +78,5 @@ Note: It uses just 4 features: test name, osp_version, average_runtime and grade
 Default grading scale used in the classifier was 1-5, with 1 meaning bad, with 3
 meaning it is in expected range.
 
-We've used a decision tree classifier rn, but plan on switching to SVM once we've
-enough data
-
+We're using svc kernel rbf, and can be made to use gaussianNB, dtree by updating the 
+classifier in the config.yaml. It takes 'svc', 'gnb' or 'dtree'. 
