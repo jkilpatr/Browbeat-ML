@@ -113,6 +113,9 @@ test_with_scenario_list:
 table_name:
   - 'prod_data'
 
+table_errors:
+  - 'num_errors'
+
 database:
   - 'ml_values'
 
@@ -137,4 +140,3 @@ classifier_lists:
   - svc
   - dtree
   - gnb
-
