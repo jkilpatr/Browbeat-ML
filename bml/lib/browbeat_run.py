@@ -20,6 +20,7 @@ class browbeat_run(object):
         if self._caching:
             self._tests = None
         self.uuid = uuid
+        self.num_errors = 0
         # If timeseries metadata is enabled we will go and grab all of it.
         if timeseries:
             self._init_timeseries()
@@ -58,10 +59,12 @@ class browbeat_run(object):
         for workload in workloads:
             if workload in index:
                 return workload
+        # return False
         raise ValueError('Failed to find index!')
 
     def _validate_result(self, index_result, test, uuid):
         if 'result' not in index_result['_type']:
+            self.num_errors += 1
             # print("UUID " + uuid + " has errors! In test " + test)
             return False
         else:
@@ -93,7 +96,11 @@ class browbeat_run(object):
                    times_search=None,
                    scenario_search=None):
         for index_result in self._elastic_connection:
-            workload = self._map_index_to_workload(index_result['_index'])
+            try:
+            # if self._map_index_to_workload(index_result['_index']) != False:  # noqa
+                workload = self._map_index_to_workload(index_result['_index'])
+            except ValueError:
+                continue
             if workload_search is not None and workload not in workload_search:
                 # print(workload_search + " not in " + workload)
                 continue
@@ -160,3 +167,6 @@ class browbeat_run(object):
 
             ret.append(test)
         return ret
+
+    def get_num_errors(self):
+        return self.num_errors
