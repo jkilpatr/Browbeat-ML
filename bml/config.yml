@@ -44,17 +44,20 @@ tests:
     test: "keystone_v2.create_tenant"
 
 watched_versions:
-  - "11-tripleo"
-  - "11-director"
-  - "12-director"
-  - "master-tripleo"
-  - "master-director"
-  - "10-tripleo"
   - "10-director"
-  - "9-tripleo"
-  - "9-director"
-  - "8-tripleo"
+  - "10-tripleo"
+  - "11-director"
+  - "11-tripleo"
+  - "12-director"
+  - "12-tripleo"
+  - "13-director"
+  - "13-tripleo"
   - "8-director"
+  - "8-tripleo"
+  - "9-director"
+  - "9-tripleo"
+  - "master-director"
+  - "master-tripleo"
 
 # list of cloud names to grab uuid's for
 clouds:
@@ -77,6 +80,9 @@ osp_version_dic:
   - master-tripleo: 6
   - 9-director: 7
   - 9-tripleo: 8
+  - 12-tripleo: 9
+  - 13-tripleo: 10
+  - 13-director: 11
 
 test_name_dic:
   - "authenticate.keystone": 1
