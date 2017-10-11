@@ -87,7 +87,7 @@ def main():
                                       str(args.days) + "d",
                                       args.version, update=False)
     elif args.timeseries_uuid is not None:
-        lib.timeseries_uploaddb(config, args.timeseries_uuid)
+        lib.timeseries_uploaddb.insert_timeseriessummaries_db(config, args.timeseries_uuid) # noqa
     elif args.summary_uuid is not None:
         lib.data_summary.summary_uuid(es_backend, config, args.summary_uuid,
                                       args.update)

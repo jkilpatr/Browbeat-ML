@@ -28,15 +28,23 @@ def insert_timeseriessummaries_db(config,uuid):
     start = graphite_details[1]
     end = graphite_details[2]
     metric_base = str(graphite_details[3]) + "."
+    base_url = "{}/render?target={}"
+    time_url = "&format=json&from={}&until={}"
+    metric = metric_base
+    base_url = base_url.format(graphite_url,
+                               metric_base)
+    time_url = time_url.format(start,
+                               end)
+    final_url = base_url + "{}" + time_url
     conn = connect_crdb(config)
     conn.set_session(autocommit=True)
     cur = conn.cursor()
-    cpu_system = summarize_metric(metrics_list[0])
-    cpu_user = summarize_metric(metrics_list[1])
-    cpu_softirq = summarize_metric(metrics_list[2])
-    cpu_wait = summarize_metric(metrics_list[3])
-    mem_slabunrecl = summarize_metric(metrics_list[4])
-    mem_used = summarize_metric(metrics_list[5])
+    cpu_system = summarize_metric(final_url,metrics_list[0])
+    cpu_user = summarize_metric(final_url,metrics_list[1])
+    cpu_softirq = summarize_metric(final_url,metrics_list[2])
+    cpu_wait = summarize_metric(final_url,metrics_list[3])
+    mem_slabunrecl = summarize_metric(final_url,metrics_list[4])
+    mem_used = summarize_metric(final_url,metrics_list[5])
     cur.execute("INSERT INTO {} VALUES ('{}', {}, {}, {}, {}, {}, \
                 {}, {}, {}, {}, {}, {});" .format(config['table_timeseries'][0],
                                                       str(uuid),
@@ -53,13 +61,8 @@ def insert_timeseriessummaries_db(config,uuid):
                                                       float(mem_slabunrecl[0]),
                                                       float(mem_slabunrecl[1])))
 
-def summarize_metric(metric_id):
-    base_url = "{}/render?target={}&format=json&from={}&until={}"
-    metric = metric_base+metric_id
-    data_url = base_url.format(graphite_url,
-                               metric,
-                               start,
-                               end)
+def summarize_metric(final_url,metric_id):
+    data_url = final_url.format(metric_id)
     response = requests.get(data_url).json()
     if "cpu" in metric_id:
         cpu_val_list = []
