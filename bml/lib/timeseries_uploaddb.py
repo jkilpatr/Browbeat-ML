@@ -45,7 +45,7 @@ def insert_timeseriessummaries_db(config,uuid):
     cpu_wait = summarize_metric(final_url,metrics_list[3])
     mem_slabunrecl = summarize_metric(final_url,metrics_list[4])
     mem_used = summarize_metric(final_url,metrics_list[5])
-    cur.execute("INSERT INTO {} VALUES ('{}', {}, {}, {}, {}, {}, \
+    cur.execute("INSERT INTO {} VALUES ('{}', {}, {}, {}, {}, {}, {},\
                 {}, {}, {}, {}, {}, {});" .format(config['table_timeseries'][0],
                                                       str(uuid),
                                                       float(cpu_system[0]),
