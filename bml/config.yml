@@ -122,6 +122,9 @@ table_name:
 table_errors:
   - 'num_errors'
 
+table_timeseries:
+  - 'timeseries_summary'
+
 database:
   - 'ml_values'
 

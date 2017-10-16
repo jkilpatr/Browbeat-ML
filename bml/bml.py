@@ -7,6 +7,7 @@ import pkg_resources
 import lib.crdb_summary
 import lib.update_classifiers
 import lib.test_classifiers
+import lib.timeseries_uploaddb
 
 
 class MyParser(argparse.ArgumentParser):
@@ -36,6 +37,12 @@ def parse_args():
                         help='--short-summary N gives \
                         summary of last N days of results but uses cockroach \
                         db so only provides with basic summary')
+
+    parser.add_argument('--upload-timesummary', dest="timeseries_uuid",
+                        type=str, default=None,
+                        help='--upload-timesummary UUID \
+                        uploads the features computed from data obtained from\
+                        graphite. ')
 
     parser.add_argument('-u', '--update-db', dest='update', type=bool,
                         default=False,
@@ -79,6 +86,8 @@ def main():
                                       es_backend,
                                       str(args.days) + "d",
                                       args.version, update=False)
+    elif args.timeseries_uuid is not None:
+        lib.timeseries_uploaddb.insert_timeseriessummaries_db(config, args.timeseries_uuid) # noqa
     elif args.summary_uuid is not None:
         lib.data_summary.summary_uuid(es_backend, config, args.summary_uuid,
                                       args.update)
