@@ -44,7 +44,7 @@ class browbeat_run(object):
 
     def get_graphite_details(self):
         graphite_support_data = [self._graphite_url, self._graphite_start,
-                             self._graphite_end, self._metrics_root]
+                                 self._graphite_end, self._metrics_root]
         return graphite_support_data
 
     def get_timeseries(self):
