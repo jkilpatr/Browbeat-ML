@@ -1,6 +1,4 @@
 from browbeat_test import browbeat_test
-from util import list_metrics
-from util import get_raw_metrics
 
 
 class browbeat_run(object):
