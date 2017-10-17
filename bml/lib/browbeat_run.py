@@ -36,8 +36,6 @@ class browbeat_run(object):
             url = test._graphite_url
             root = test._metrics_root
         self._metrics_root = test._metrics_root
-        metrics_list = list_metrics(url, root)
-        self._graphite_metrics_list = metrics_list
         self._graphite_start = start
         self._graphite_end = end
         self._graphite_url = url
@@ -47,12 +45,6 @@ class browbeat_run(object):
                                  self._graphite_end, self._metrics_root]
         return graphite_support_data
 
-    def get_timeseries(self):
-        for metric in self._graphite_metrics_list:
-            yield get_raw_metrics(metric,
-                                  self._graphite_url,
-                                  self._graphite_start,
-                                  self._graphite_end)
 
     def _map_scenario_to_test(self, source):
         if 'action' in source:
