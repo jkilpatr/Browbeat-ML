@@ -1,5 +1,5 @@
 from elasticsearch import Elasticsearch
-from bml.lib.util import connect_crdb
+from util import connect_crdb
 
 
 def compute_hits(start, end, cloud_name, level_type):
