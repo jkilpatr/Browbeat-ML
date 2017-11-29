@@ -28,12 +28,16 @@ class browbeat_run(object):
         # the next few thousand years
         start = 2000000000
         end = 0
+        url = ""
+        root = ""
         for test in self.get_tests():
             start = min(start, test._metrics_start)
             end = max(end, test._metrics_end)
             url = test._graphite_url
             root = test._metrics_root
-        self._metrics_root = test._metrics_root
+        self._metrics_root = root
+        metrics_list = list_metrics(url, root)
+        self._graphite_metrics_list = metrics_list
         self._graphite_start = start
         self._graphite_end = end
         self._graphite_url = url
