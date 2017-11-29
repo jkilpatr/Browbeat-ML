@@ -8,6 +8,7 @@ import lib.crdb_summary
 import lib.update_classifiers
 import lib.test_classifiers
 import lib.timeseries_uploaddb
+import lib.logsummary_uploaddb
 
 
 class MyParser(argparse.ArgumentParser):
@@ -43,6 +44,12 @@ def parse_args():
                         help='--upload-timesummary UUID \
                         uploads the features computed from data obtained from\
                         graphite. ')
+
+    parser.add_argument('--upload-logsummary', dest="loggin_uuid",
+                        type=str, default=None,
+                        help='--upload-logsummary UUID \
+                        uploads the log summary to crdb \
+                        currently just summarizes over entire timeperiod. ')
 
     parser.add_argument('-u', '--update-db', dest='update', type=bool,
                         default=False,
@@ -88,6 +95,8 @@ def main():
                                       args.version, update=False)
     elif args.timeseries_uuid is not None:
         lib.timeseries_uploaddb.insert_timeseriessummaries_db(config, args.timeseries_uuid) # noqa
+    elif args.loggin_uuid is not None:
+        lib.logsummary_uploaddb.insert_logsummary_db(config,args.loggin_uuid) # noqa
     elif args.summary_uuid is not None:
         lib.data_summary.summary_uuid(es_backend, config, args.summary_uuid,
                                       args.update)
