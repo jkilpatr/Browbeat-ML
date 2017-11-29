@@ -41,16 +41,13 @@ class Backend(object):
         return list(uuid_list)
 
     def grab_uuids_by_date(self, version, time_period):
-        query = {  # noqa
-                  "query": {  # noqa
-                    "filtered": {  # noqa
-                      "query": {"match": {'version.osp_version': version}}, # noqa
-                      "filter": {  # noqa
+        query = {
+            "query": {
+                "filtered": {
+                    "query": {"match": {'version.osp_version': version}},
+                    "filter": {
                         "range": {"timestamp": {"gt": "now-" + time_period}}
-                      }  # noqa
-                    }  # noqa
-                  }  # noqa
-                }  # noqa
+                        }}}}
 
         results = helpers.scan(self.es, query, size=100, request_timeout=1000)
 

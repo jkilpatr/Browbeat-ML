@@ -32,7 +32,6 @@ class browbeat_run(object):
             start = min(start, test._metrics_start)
             end = max(end, test._metrics_end)
             url = test._graphite_url
-            root = test._metrics_root
         self._metrics_root = test._metrics_root
         self._graphite_start = start
         self._graphite_end = end
@@ -42,7 +41,6 @@ class browbeat_run(object):
         graphite_support_data = [self._graphite_url, self._graphite_start,
                                  self._graphite_end, self._metrics_root]
         return graphite_support_data
-
 
     def _map_scenario_to_test(self, source):
         if 'action' in source:

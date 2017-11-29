@@ -1,8 +1,5 @@
 import yaml
 import logging
-import numpy
-import random
-import requests
 import psycopg2
 from datetime import date
 
