@@ -1,5 +1,5 @@
 from browbeat_test import browbeat_test
-
+import bml
 
 class browbeat_run(object):
 
@@ -36,7 +36,7 @@ class browbeat_run(object):
             url = test._graphite_url
             root = test._metrics_root
         self._metrics_root = root
-        metrics_list = list_metrics(url, root)
+        metrics_list = bml.lib.util.list_metrics(url, root)
         self._graphite_metrics_list = metrics_list
         self._graphite_start = start
         self._graphite_end = end
