@@ -1,8 +1,8 @@
 import numpy
 import requests
-from bml.lib.elastic_backend import Backend
-from bml.lib.browbeat_run import browbeat_run
-from bml.lib.util import connect_crdb
+from elastic_backend import Backend
+from browbeat_run import browbeat_run
+from util import connect_crdb
 
 metrics_list = ["overcloud-controller-0.cpu-*.cpu-system",
                 "overcloud-controller-0.cpu-*.cpu-user",
@@ -14,14 +14,22 @@ metrics_list = ["overcloud-controller-0.cpu-*.cpu-system",
 
 def get_features(gdata, pos):
     values = []
+    empty_check = True
     for entry in gdata:
         if type(entry[pos]) is not list and entry[pos] is not None:
             values.append(entry[pos])
+            empty_check = False
     values = numpy.array(values)
-    return [numpy.mean(values), numpy.percentile(values, 95)]
+    if empty_check:
+        return [0, 0]
+    else:
+        mean = round(numpy.mean(values), 2)
+        percentile95 = round(numpy.percentile(values, 95), 2)
+        return [mean, percentile95]
 
 
 def insert_timeseriessummaries_db(config, uuid):
+    # WIP should pass the backend object here
     elastic = Backend("elk.browbeatproject.org", "9200")
     brun = browbeat_run(elastic, uuid, timeseries=True)
     graphite_details = brun.get_graphite_details()
