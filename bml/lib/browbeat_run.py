@@ -21,21 +21,29 @@ class browbeat_run(object):
         self.num_errors = 0
         # If timeseries metadata is enabled we will go and grab all of it.
         if timeseries:
-            self._init_timeseries()
+            self._init_timeseries(elastic_connection, uuid)
 
-    def _init_timeseries(self):
+    def _init_timeseries(self, elastic_connection, uuid):
+        graphite_details \
+            = elastic_connection.compute_start_end(uuid)
+        # print graphite_details
+        self._metrics_root = graphite_details[2]
+        self._graphite_start = int(graphite_details[0]) / 1000
+        self._graphite_end = int(graphite_details[1]) / 1000
+        self._graphite_url = graphite_details[3]
+        # Not needed but keeping in case the new way breaks
         # this timestamp should never be smaller than any time in
         # the next few thousand years
-        start = 2000000000
-        end = 0
-        for test in self.get_tests():
-            start = min(start, test._metrics_start)
-            end = max(end, test._metrics_end)
-            url = test._graphite_url
-        self._metrics_root = test._metrics_root
-        self._graphite_start = start
-        self._graphite_end = end
-        self._graphite_url = url
+        # start = 2000000000
+        # end = 0
+        # for test in self.get_tests():
+        #     start = min(start, test._metrics_start)
+        #     end = max(end, test._metrics_end)
+        #     url = test._graphite_url
+        # self._metrics_root = test._metrics_root
+        # self._graphite_start = start
+        # self._graphite_end = end
+        # self._graphite_url = url
 
     def get_graphite_details(self):
         graphite_support_data = [self._graphite_url, self._graphite_start,

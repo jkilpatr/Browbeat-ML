@@ -14,16 +14,22 @@ metrics_list = ["overcloud-controller-0.cpu-*.cpu-system",
 
 def get_features(gdata, pos):
     values = []
+    empty_check = True
     for entry in gdata:
         if type(entry[pos]) is not list and entry[pos] is not None:
             values.append(entry[pos])
+            empty_check = False
     values = numpy.array(values)
-    mean = round(numpy.mean(values), 2)
-    percentile95 = round(numpy.percentile(values, 95), 2)
-    return [mean, percentile95]
+    if empty_check:
+        return [0, 0]
+    else:
+        mean = round(numpy.mean(values), 2)
+        percentile95 = round(numpy.percentile(values, 95), 2)
+        return [mean, percentile95]
 
 
 def insert_timeseriessummaries_db(config, uuid):
+    # WIP should pass the backend object here
     elastic = Backend("elk.browbeatproject.org", "9200")
     brun = browbeat_run(elastic, uuid, timeseries=True)
     graphite_details = brun.get_graphite_details()

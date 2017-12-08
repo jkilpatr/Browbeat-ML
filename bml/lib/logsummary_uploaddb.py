@@ -2,8 +2,7 @@ from elasticsearch import Elasticsearch
 from util import connect_crdb
 
 
-def compute_hits(start, end, cloud_name, level_type):
-    es = Elasticsearch([{'host': 'elk.browbeatproject.org', 'port': 9200}])
+def compute_hits(es, start, end, cloud_name, level_type):
     time_dict = {
         "format": "epoch_millis"
     }
@@ -55,11 +54,11 @@ def insert_logsummary_db(config, uuid):
     start = int(res['aggregations']['min_time']['value'])
     end = int(res['aggregations']['max_time']['value'])
     cloud_name = res['hits']['hits'][0]['_source']['cloud_name']
-    num_errors = compute_hits(start, end, cloud_name, 'error')
-    num_warn = compute_hits(start, end, cloud_name, 'warning')
-    num_debug = compute_hits(start, end, cloud_name, 'debug')
-    num_notice = compute_hits(start, end, cloud_name, 'notice')
-    num_info = compute_hits(start, end, cloud_name, 'info')
+    num_errors = compute_hits(es, start, end, cloud_name, 'error')
+    num_warn = compute_hits(es, start, end, cloud_name, 'warning')
+    num_debug = compute_hits(es, start, end, cloud_name, 'debug')
+    num_notice = compute_hits(es, start, end, cloud_name, 'notice')
+    num_info = compute_hits(es, start, end, cloud_name, 'info')
     conn = connect_crdb(config)
     conn.set_session(autocommit=True)
     cur = conn.cursor()
